@@ -11,10 +11,7 @@ DATA_X_FILES = xdr/types.x \
 	xdr/consensus_api.x \
 	xdr/cryptocoin_experiment.x \
 	xdr/header_summary.x \
-	xdr/sam_experiments.x \
-	xdr/sam_transaction.x \
-	xdr/sam_types.x \
-	xdr/sam_block.x
+	xdr/hello_world_api.x
 
 SERVER_X_FILES = xdr/transaction_submission_api.x xdr/server_control_api.x \
 	xdr/state_query_api.x 
@@ -40,7 +37,8 @@ EDCE_SRCS = memory_database.cc user_account.cc \
 	synthetic_data_generator/synthetic_data_gen.cc \
 	synthetic_data_generator/synthetic_data_gen_options.cc \
 	log_merge_worker.cc file_prealloc_worker.cc \
-	sam_crypto_utils.cc signature_check_api_server.cc
+	signature_check_api_server.cc \
+	rpc/hello_world_api.cc hello_world_api_server.cc
 
 TX_GEN_SRCS = tx_generator/account_manager.cc
 
@@ -77,8 +75,7 @@ MAIN_CCS = synthetic_data_generator/aberrant_datasets_gen.cc \
 	cvxpy_comparison.cc summarize_headers.cc \
 	synthetic_data_generator/cryptocoin_dataset_gen.cc \
 	synthetic_data_generator/synthetic_data_gen_from_params.cc \
-	tatonnement_sim.cc trie_comparison.cc save_acclog_fast.cc \
-	sam_signature_check_benchmark.cc
+	tatonnement_sim.cc trie_comparison.cc save_acclog_fast.cc
 
 $(MAIN_CCS:.cc=.o) : $(SRC_X_FILES:.x=.h)
 
@@ -132,8 +129,7 @@ bin_PROGRAMS = database_speed_test test \
 	cryptocoin_data_gen \
 	summarize_headers \
 	trie_comparison \
-	save_acclog_fast \
-	sam_signature_check_benchmark
+	save_acclog_fast
 
 all-local: xdrpy_module
 
@@ -177,8 +173,6 @@ experiment_controller_SOURCES = $(SRCS) experiment_controller.cc
 summarize_headers_SOURCES = $(SRCS) summarize_headers.cc
 trie_comparison_SOURCES = $(SRCS) trie_comparison.cc
 save_acclog_fast_SOURCES = $(SRCS) save_acclog_fast.cc
-
-sam_signature_check_benchmark_SOURCES = $(SRCS) sam_signature_check_benchmark.cc
 
 CLEANFILES = $(SRC_X_FILES:.x=.h) $(SERVER_X_FILES:.x=.scaffold_h) $(SERVER_X_FILES:.x=.scaffold_cc) \
 	 $(SERVER_X_FILES:.x=.scaffold_h_async) $(SERVER_X_FILES:.x=.scaffold_cc_async)

@@ -1,0 +1,11 @@
+protocol: 
+  tax_rate: 15
+  smooth_mult: 10
+  num_assets: 50
+
+edce-node:
+  num_tx_processing_threads: 1
+  num_sig_check_threads: 1
+  persistence_frequency: 5
+
+

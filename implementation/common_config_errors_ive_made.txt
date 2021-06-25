@@ -1,0 +1,12 @@
+- if autogen complains about no CC or finding c source, it's probably because you didn't put _SOURCES suffix when adding a binary to Makefile.am
+- don't put : after libfyaml queries
+- the cimport statements in pyxdr stuff has to be in a particular order.  Presumably the order has to match the hierarchy in which .h files include each other (at least, that seems to work).  Not at all sure why including in different orders doesn't seem to work.  At minimum, it seems that in the PYX includes, the _includes cimport should be last
+- we can put libfyaml queries on multiple lines, but the actual query is one string - so no commas or separators between yaml specifications.
+
+-- e.g. fy_document_scanf(
+        "/protocol/tax_rate %u " //space after %u
+        "/protocol/smooth_mult %u", // no space on last %u, COMMA ONLY ON LAST QUERY.
+        variables...);
+
+
+-- if you run git submodule update/sync after ./configure, configure will use a version of xdrc installed at /usr/local/bin instead of the xdrc at the subdirectory, which means that my python modifications will cause a compile error.

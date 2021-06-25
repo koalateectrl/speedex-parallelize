@@ -1,0 +1,144 @@
+{
+   TbbAllocation
+   Helgrind:Race
+   obj:/usr/lib/x86_64-linux-gnu/libtbb.so.2
+   fun:operator new
+   fun:allocate_sibling
+   fun:offer_work
+   fun:execute<tbb::interface9::internal::start_for<tbb::blocked_range<long unsigned int>, edce::MemoryDatabase::commit()::<lambda(auto:5)>, const tbb::auto_partitioner>, tbb::blocked_range<long unsigned int> >
+   fun:_ZN3tbb10interface98internal9start_forINS_13blocked_rangeImEEZN4edce14MemoryDatabase6commitEvEUlT_E_KNS_16auto_partitionerEE7executeEv
+   obj:/usr/lib/x86_64-linux-gnu/libtbb.so.2
+   obj:/usr/lib/x86_64-linux-gnu/libtbb.so.2
+   obj:/usr/lib/x86_64-linux-gnu/libtbb.so.2
+   fun:spawn_root_and_wait
+   fun:run
+   fun:parallel_for<tbb::blocked_range<long unsigned int>, edce::MemoryDatabase::commit()::<lambda(auto:5)> >
+}
+
+{
+   MoreTbb
+   Helgrind:Race
+   fun:flag_task
+   fun:allocate_sibling
+   fun:offer_work
+   fun:execute<tbb::interface9::internal::start_for<tbb::blocked_range<long unsigned int>, edce::MemoryDatabase::commit()::<lambda(auto:5)>, const tbb::auto_partitioner>, tbb::blocked_range<long unsigned int> >
+   fun:_ZN3tbb10interface98internal9start_forINS_13blocked_rangeImEEZN4edce14MemoryDatabase6commitEvEUlT_E_KNS_16auto_partitionerEE7executeEv
+   obj:/usr/lib/x86_64-linux-gnu/libtbb.so.2
+   obj:/usr/lib/x86_64-linux-gnu/libtbb.so.2
+   obj:/usr/lib/x86_64-linux-gnu/libtbb.so.2
+   fun:spawn_root_and_wait
+   fun:run
+   fun:parallel_for<tbb::blocked_range<long unsigned int>, edce::MemoryDatabase::commit()::<lambda(auto:5)> >
+}
+{
+   <insert_a_suppression_name_here>
+   Helgrind:Race
+   fun:__TBB_machine_atomic_store<signed char, 3>
+   fun:store_with_release
+   fun:__TBB_store_with_release<signed char, signed char>
+   fun:store_with_release
+   fun:operator=
+   fun:flag_task
+   fun:allocate_sibling
+   fun:offer_work
+   fun:execute<tbb::interface9::internal::start_for<tbb::blocked_range<long unsigned int>, edce::MemoryDatabase::commit()::<lambda(auto:5)>, const tbb::auto_partitioner>, tbb::blocked_range<long unsigned int> >
+   fun:_ZN3tbb10interface98internal9start_forINS_13blocked_rangeImEEZN4edce14MemoryDatabase6commitEvEUlT_E_KNS_16auto_partitionerEE7executeEv
+   obj:/usr/lib/x86_64-linux-gnu/libtbb.so.2
+   obj:/usr/lib/x86_64-linux-gnu/libtbb.so.2
+   obj:/usr/lib/x86_64-linux-gnu/libtbb.so.2
+   fun:spawn_root_and_wait
+   fun:run
+   fun:parallel_for<tbb::blocked_range<long unsigned int>, edce::MemoryDatabase::commit()::<lambda(auto:5)> >
+}
+{
+   <insert_a_suppression_name_here>
+   Helgrind:Race
+   obj:/usr/lib/x86_64-linux-gnu/libtbb.so.2
+   fun:spawn
+   fun:offer_work
+   fun:execute<tbb::interface9::internal::start_for<tbb::blocked_range<long unsigned int>, edce::MemoryDatabase::commit()::<lambda(auto:5)>, const tbb::auto_partitioner>, tbb::blocked_range<long unsigned int> >
+   fun:_ZN3tbb10interface98internal9start_forINS_13blocked_rangeImEEZN4edce14MemoryDatabase6commitEvEUlT_E_KNS_16auto_partitionerEE7executeEv
+   obj:/usr/lib/x86_64-linux-gnu/libtbb.so.2
+   obj:/usr/lib/x86_64-linux-gnu/libtbb.so.2
+   obj:/usr/lib/x86_64-linux-gnu/libtbb.so.2
+   fun:spawn_root_and_wait
+   fun:run
+   fun:parallel_for<tbb::blocked_range<long unsigned int>, edce::MemoryDatabase::commit()::<lambda(auto:5)> >
+}
+
+{
+   <insert_a_suppression_name_here>
+   Helgrind:Race
+   obj:/usr/lib/x86_64-linux-gnu/libtbb.so.2
+   fun:allocate_sibling
+   fun:offer_work
+   fun:execute<tbb::interface9::internal::start_for<tbb::blocked_range<long unsigned int>, edce::init_management_structures_no_lmdb(edce::EdceManagementStructures&, edce::AccountID, int, uint64_t)::<lambda(auto:12)>, const tbb::auto_partitioner>, tbb::blocked_range<long unsigned int> >
+   fun:_ZN3tbb10interface98internal9start_forINS_13blocked_rangeImEEZN4edce34init_management_structures_no_lmdbERNS5_24EdceManagementStructuresEmimEUlT_E_KNS_16auto_partitionerEE7executeEv
+   obj:/usr/lib/x86_64-linux-gnu/libtbb.so.2
+   obj:/usr/lib/x86_64-linux-gnu/libtbb.so.2
+   obj:/usr/lib/x86_64-linux-gnu/libtbb.so.2
+   fun:spawn_root_and_wait
+   fun:run
+}
+
+
+{
+   <insert_a_suppression_name_here>
+   Helgrind:Race
+   fun:blocked_range
+   fun:start_for
+   fun:offer_work
+   fun:execute<tbb::interface9::internal::start_for<tbb::blocked_range<long unsigned int>, edce::init_management_structures_no_lmdb(edce::EdceManagementStructures&, edce::AccountID, int, uint64_t)::<lambda(auto:12)>, const tbb::auto_partitioner>, tbb::blocked_range<long unsigned int> >
+   fun:_ZN3tbb10interface98internal9start_forINS_13blocked_rangeImEEZN4edce34init_management_structures_no_lmdbERNS5_24EdceManagementStructuresEmimEUlT_E_KNS_16auto_partitionerEE7executeEv
+   obj:/usr/lib/x86_64-linux-gnu/libtbb.so.2
+   obj:/usr/lib/x86_64-linux-gnu/libtbb.so.2
+   obj:/usr/lib/x86_64-linux-gnu/libtbb.so.2
+   fun:spawn_root_and_wait
+   fun:run
+}
+
+{
+   <insert_a_suppression_name_here>
+   Helgrind:Race
+   fun:start_for
+   fun:offer_work
+   fun:execute<tbb::interface9::internal::start_for<tbb::blocked_range<long unsigned int>, edce::init_management_structures_no_lmdb(edce::EdceManagementStructures&, edce::AccountID, int, uint64_t)::<lambda(auto:12)>, const tbb::auto_partitioner>, tbb::blocked_range<long unsigned int> >
+   fun:_ZN3tbb10interface98internal9start_forINS_13blocked_rangeImEEZN4edce34init_management_structures_no_lmdbERNS5_24EdceManagementStructuresEmimEUlT_E_KNS_16auto_partitionerEE7executeEv
+   obj:/usr/lib/x86_64-linux-gnu/libtbb.so.2
+   obj:/usr/lib/x86_64-linux-gnu/libtbb.so.2
+   obj:/usr/lib/x86_64-linux-gnu/libtbb.so.2
+   fun:spawn_root_and_wait
+   fun:run
+}
+{
+   <insert_a_suppression_name_here>
+   Helgrind:Race
+   obj:/usr/lib/x86_64-linux-gnu/libtbb.so.2
+   fun:spawn
+   fun:offer_work
+   ...
+   obj:/usr/lib/x86_64-linux-gnu/libtbb.so.2
+   obj:/usr/lib/x86_64-linux-gnu/libtbb.so.2
+   obj:/usr/lib/x86_64-linux-gnu/libtbb.so.2
+   fun:spawn_root_and_wait
+   fun:run
+}
+{
+   <insert_a_suppression_name_here>
+   Helgrind:Race
+   obj:/usr/lib/x86_64-linux-gnu/libtbb.so.2
+   obj:/usr/lib/x86_64-linux-gnu/libtbb.so.2
+   fun:spawn_root_and_wait
+   fun:run
+}
+
+
+{
+   <insert_a_suppression_name_here>
+   Helgrind:Race
+   obj:/usr/lib/x86_64-linux-gnu/libtbb.so.2
+   obj:/usr/lib/x86_64-linux-gnu/libtbb.so.2
+   obj:/usr/lib/x86_64-linux-gnu/libtbb.so.2
+   fun:spawn_root_and_wait
+   fun:run
+}

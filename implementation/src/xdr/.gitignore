@@ -1,0 +1,4 @@
+*.pyx
+*.pxd
+*_includes.cpp
+*_xdr.cpp

@@ -26,10 +26,6 @@ public:
 
     MyProgApiServer(EdceNode& main_node);
 
-    void print_hello_world() {
-        myprog_server.print_hello_world();
-    }
-
 };
 
 } /* edce */

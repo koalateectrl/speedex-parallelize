@@ -19,7 +19,6 @@ std::string hostname_from_idx(int idx) {
 void send_breakpoint_signal(int idx) {
     auto fd = xdr::tcp_connect(hostname_from_idx(idx).c_str(), HELLOWORLD_PORT);
     auto client = xdr::srpc_client<MyProgV1>(fd.get());
-    client.signal_start();
 }
 
 void start_production() {
@@ -34,7 +33,7 @@ poll_node(int idx) {
     auto client = xdr::srpc_client<MyProgV1>(fd.get());
 
     std::printf("printing hello world \n");
-    return *client.print_hello_world();
+    client.print_hello_world();
 }
 
 

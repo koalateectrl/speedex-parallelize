@@ -3,9 +3,8 @@
 namespace edce {
 
 
-MyProgApiServer::MyProgApiServer(EdceNode& main_node)
-    : myprog_server(main_node)
-    , ps()
+MyProgApiServer::MyProgApiServer()
+    : ps()
     , myprog_listener(ps, xdr::tcp_listen(HELLOWORLD_PORT, AF_INET), false, xdr::session_allocator<void>()) {
         myprog_listener.register_service(myprog_server);
 

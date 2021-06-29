@@ -4,26 +4,6 @@
 %#include "xdr/experiments.h"
 #endif
 
-#if defined(XDRC_PXDI)
-%from types_xdr cimport *
-%from block_xdr cimport *
-%from experiments_xdr cimport *
-#endif
-
-#if defined(XDRC_PXD)
-%from types_xdr cimport *
-%from block_xdr cimport *
-%from experiments_xdr cimport *
-%from consensus_api_includes cimport *
-#endif
-
-#if defined(XDRC_PYX)
-%from types_xdr cimport *
-%from block_xdr cimport *
-%from experiments_xdr cimport *
-%from consensus_api_includes cimport *
-#endif
-
 
 namespace edce {
 

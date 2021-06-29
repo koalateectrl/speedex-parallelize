@@ -24,7 +24,7 @@ class MyProgApiServer {
 
 public:
 
-    MyProgApiServer(EdceNode& main_node);
+    MyProgApiServer();
 
 };
 

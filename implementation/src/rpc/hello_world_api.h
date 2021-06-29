@@ -9,9 +9,10 @@
 namespace edce {
 
 class MyProgV1_server {
-  EdceNode& main_node;
 public:
   using rpc_interface_type = MyProgV1;
+
+  MyProgV1_server() : {};
 
   void print_hello_world();
 };

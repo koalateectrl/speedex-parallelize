@@ -176,7 +176,7 @@ summarize_headers_SOURCES = $(SRCS) summarize_headers.cc
 trie_comparison_SOURCES = $(SRCS) trie_comparison.cc
 save_acclog_fast_SOURCES = $(SRCS) save_acclog_fast.cc
 
-hello_world_controller_SOURCES = $(SRCS) hellow_world_controller.cc
+hello_world_controller_SOURCES = $(SRCS) hello_world_controller.cc
 
 CLEANFILES = $(SRC_X_FILES:.x=.h) $(SERVER_X_FILES:.x=.scaffold_h) $(SERVER_X_FILES:.x=.scaffold_cc) \
 	 $(SERVER_X_FILES:.x=.scaffold_h_async) $(SERVER_X_FILES:.x=.scaffold_cc_async)

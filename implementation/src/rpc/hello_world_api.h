@@ -12,7 +12,7 @@ class MyProgV1_server {
 public:
   using rpc_interface_type = MyProgV1;
 
-  MyProgV1_server() : {};
+  MyProgV1_server() {};
 
   void print_hello_world();
 };

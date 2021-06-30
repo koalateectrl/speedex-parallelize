@@ -16,16 +16,6 @@ std::string hostname_from_idx(int idx) {
     return std::string("10.10.1.") + std::to_string(idx);
 }
 
-void send_breakpoint_signal(int idx) {
-    auto fd = xdr::tcp_connect(hostname_from_idx(idx).c_str(), HELLOWORLD_PORT);
-    auto client = xdr::srpc_client<MyProgV1>(fd.get());
-}
-
-void start_production() {
-    send_breakpoint_signal(1);
-}
-
-
 void
 poll_node(int idx) {
     
@@ -45,8 +35,7 @@ int main(int argc, char const *argv[]) {
     }
 
     if (argc == 1) {
-        start_production();
-        poll_node(1);
+        poll_node(2);
     }
 
     return 0;

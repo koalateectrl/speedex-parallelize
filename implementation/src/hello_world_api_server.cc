@@ -8,8 +8,9 @@ MyProgApiServer::MyProgApiServer()
     , myprog_listener(ps, xdr::tcp_listen(HELLOWORLD_PORT, AF_INET), false, xdr::session_allocator<void>()) {
         myprog_listener.register_service(myprog_server);
 
-        std::thread th([this] {ps.run();});
-        th.detach();
+        ps.run();
+        //std::thread th([this] {ps.run();});
+        //th.detach();
     }
 
 /*

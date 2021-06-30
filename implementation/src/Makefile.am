@@ -76,7 +76,7 @@ MAIN_CCS = synthetic_data_generator/aberrant_datasets_gen.cc \
 	synthetic_data_generator/cryptocoin_dataset_gen.cc \
 	synthetic_data_generator/synthetic_data_gen_from_params.cc \
 	tatonnement_sim.cc trie_comparison.cc save_acclog_fast.cc \
-	hello_world_controller.cc
+	hello_world_controller.cc hello_world_server_main.cc
 
 $(MAIN_CCS:.cc=.o) : $(SRC_X_FILES:.x=.h)
 
@@ -131,7 +131,8 @@ bin_PROGRAMS = database_speed_test test \
 	summarize_headers \
 	trie_comparison \
 	save_acclog_fast \
-	hello_world_controller
+	hello_world_controller \
+	hello_world_server_main
 
 all-local: xdrpy_module
 
@@ -177,6 +178,8 @@ trie_comparison_SOURCES = $(SRCS) trie_comparison.cc
 save_acclog_fast_SOURCES = $(SRCS) save_acclog_fast.cc
 
 hello_world_controller_SOURCES = $(SRCS) hello_world_controller.cc
+
+hello_world_server_main_SOURCES = $(SRCS) hello_world_server_main.cc
 
 CLEANFILES = $(SRC_X_FILES:.x=.h) $(SERVER_X_FILES:.x=.scaffold_h) $(SERVER_X_FILES:.x=.scaffold_cc) \
 	 $(SERVER_X_FILES:.x=.scaffold_h_async) $(SERVER_X_FILES:.x=.scaffold_cc_async)

@@ -49,4 +49,6 @@ int main(int argc, char const *argv[]) {
         poll_node(1);
     }
 
+    return 0;
+
 }

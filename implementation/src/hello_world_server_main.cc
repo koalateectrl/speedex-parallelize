@@ -1,7 +1,7 @@
 #include "hello_world_api_server.h"
 
 
-namespace edce {
+using namespace edce;
     
 int main(int argc, char const *argv[]) {
 
@@ -14,5 +14,6 @@ int main(int argc, char const *argv[]) {
         MyProgApiServer myprog_server();
     }
 
-}
+    return 0;
+
 }

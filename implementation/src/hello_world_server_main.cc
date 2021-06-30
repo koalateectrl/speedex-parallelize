@@ -11,7 +11,7 @@ int main(int argc, char const *argv[]) {
     }
 
     if (argc == 1) {
-        MyProgApiServer myprog_server();
+        MyProgApiServer myprog_server;
     }
 
     return 0;

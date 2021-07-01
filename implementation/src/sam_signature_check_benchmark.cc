@@ -1,10 +1,34 @@
 #include <iostream>
-#include "sam_crypto_utils.h"
-#include "xdr/sam_experiments.h"
-#include <vector>
-#include "sam_utils.h"
+#include "utils.h"
+#include "crypto_utils.h"
 
-using namespace sam_edce;
+
+#include "xdr/experiments.h"
+#include <vector>
+#include "sam_crypto_utils.h"
+
+#include <xdrpp/srpc.h>
+#include <thread>
+#include <chrono>
+
+#include <cstdint>
+
+using namespace edce;
+
+std::string hostname_from_idx(int idx) {
+    return std::string("10.10.1.") + std::to_string(idx);
+}
+
+void
+poll_node(int idx) {
+    
+    auto fd = xdr::tcp_connect(hostname_from_idx(idx).c_str(), SIGNATURECHECK_PORT);
+    auto client = xdr::srpc_client<SignatureCheckV1>(fd.get());
+
+    std::printf("printing hello world \n");
+    client.print_hello_world();
+}
+
 
 int main(int argc, char const *argv[])
 {
@@ -60,6 +84,11 @@ int main(int argc, char const *argv[])
     size_t num_threads = std::stoi(argv[3]);
 
     auto timestamp = init_time_measurement();
+
+
+    /*
+    poll_node(2);
+    */
 
     float res = measure_time(timestamp);
 

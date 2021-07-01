@@ -2,8 +2,8 @@
 
 #include "edce_node.h"
 #include "rpc/rpcconfig.h"
-#include "rpc/consensus_api.h"
-#include "xdr/consensus_api.h"
+#include "rpc/signature_check_api.h"
+#include "xdr/signature_check_api.h"
 
 #include <xdrpp/arpc.h>
 #include <xdrpp/srpc.h>
@@ -14,49 +14,17 @@ namespace edce {
 
 class SignatureCheckApiServer {
 
-    using BlockTransfer = BlockTransferV1_server;
-    using BlockAcknowledge = BlockAcknowledgeV1_server;
-    using RequestBlockForwarding = RequestBlockForwardingV1_server;
-    using ExperimentControl = ExperimentControlV1_server;
-    using SignatureChecking = SignatureCheckingV1_server;
+    using SignatureCheck = SignatureCheckV1_server;
 
-    BlockTransfer transfer_server;
-    BlockAcknowledge ack_server;
-    RequestBlockForwarding req_server;
-    ExperimentControl control_server;
-    SignatureChecking sigcheck_server;
+    SignatureCheck signaturecheck_server;
 
     xdr::pollset ps;
 
-    xdr::srpc_tcp_listener<> bt_listener;
-    xdr::srpc_tcp_listener<> ack_listener;
-    xdr::srpc_tcp_listener<> req_listener;
-    xdr::srpc_tcp_listener<> control_listener;
-    xdr::srpc_tcp_listener<> sigcheck_listener;
+    xdr::srpc_tcp_listener<> signaturecheck_listener;
 
 public:
 
-    SignatureCheckApiServer(EdceNode& main_node);
-
-    void wait_for_experiment_start() {
-        control_server.wait_for_start();
-    }
-
-    void set_experiment_done() {
-        control_server.set_experiment_done();
-    }
-
-    void set_experiment_ready_to_start() {
-        control_server.set_experiment_ready_to_start();
-    }
-
-    void wait_until_block_buffer_empty() {
-        transfer_server.wait_until_block_buffer_empty();
-    }
-
-    void wait_until_upstream_finished() {
-        control_server.wait_for_upstream_finish();
-    }
+    SignatureCheckApiServer();
 
 };
 

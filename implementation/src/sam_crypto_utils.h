@@ -1,36 +1,28 @@
 #pragma once
 
-#include <array>
+#include "xdr/types.h"
+#include "xdr/block.h"
+
 #include <sodium.h>
-#include <vector>
-#include "xdr/sam_types.h"
+#include <array>
 
-namespace sam_edce {
+#include "edce_management_structures.h"
 
-struct DeterministicKeyGenerator {
-    using SecretKey = std::array<unsigned char, 64>;
-    
-    DeterministicKeyGenerator() {
-        if (sodium_init() < 0) {
-            throw std::runtime_error("could not init sodium");
-        }
-    }
+namespace edce {
 
-    std::pair<SecretKey, PublicKey> deterministic_key_gen(AccountID account);
+class SamBlockSignatureChecker {
 
-    void gen_key_pair_list();
-};
+    EdceManagementStructures& management_structures;
 
-
-class BlockSignatureChecker {
 public:
-    BlockSignatureChecker() {
-        if (sodium_init() < 0) {
+    SamBlockSignatureChecker(EdceManagementStructures& management_structures) 
+    : management_structures(management_structures) {
+        if (sodium_init() == -1) {
             throw std::runtime_error("could not init sodium");
         }
     }
 
-    void check_all_sigs();
-};
+    bool check_all_sigs(const SerializedBlock& block);
+}
 
 }

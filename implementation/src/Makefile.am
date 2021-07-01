@@ -11,7 +11,8 @@ DATA_X_FILES = xdr/types.x \
 	xdr/consensus_api.x \
 	xdr/cryptocoin_experiment.x \
 	xdr/header_summary.x \
-	xdr/hello_world_api.x
+	xdr/hello_world_api.x \
+	xdr/signature_check_api.x
 
 SERVER_X_FILES = xdr/transaction_submission_api.x xdr/server_control_api.x \
 	xdr/state_query_api.x 
@@ -37,8 +38,8 @@ EDCE_SRCS = memory_database.cc user_account.cc \
 	synthetic_data_generator/synthetic_data_gen.cc \
 	synthetic_data_generator/synthetic_data_gen_options.cc \
 	log_merge_worker.cc file_prealloc_worker.cc \
-	signature_check_api_server.cc \
-	rpc/hello_world_api.cc hello_world_api_server.cc
+	rpc/hello_world_api.cc hello_world_api_server.cc \
+	rpc/signature_check_api.cc signature_check_api_server.cc
 
 TX_GEN_SRCS = tx_generator/account_manager.cc
 
@@ -76,7 +77,9 @@ MAIN_CCS = synthetic_data_generator/aberrant_datasets_gen.cc \
 	synthetic_data_generator/cryptocoin_dataset_gen.cc \
 	synthetic_data_generator/synthetic_data_gen_from_params.cc \
 	tatonnement_sim.cc trie_comparison.cc save_acclog_fast.cc \
-	hello_world_controller.cc hello_world_server_main.cc
+	hello_world_controller.cc hello_world_server_main.cc \
+	signature_check_server_main.cc
+
 
 $(MAIN_CCS:.cc=.o) : $(SRC_X_FILES:.x=.h)
 
@@ -99,6 +102,8 @@ SUFFIXES = .x .h
 	$(XDRC) --pxdi $< -o $(basename $@)_includes.pxd
 	$(XDRC) --pxd $< -o $(basename $@)_xdr.pxd
 	$(XDRC) --pyx $< -o $(basename $@)_xdr.pyx
+
+x_to_h_only: $(DATA_X_FILES:.x=.h)
 
 PYX_FILES = $(DATA_X_FILES:.x=_xdr.pyx)
 PXD_FILES = $(DATA_X_FILES:.x=_xdr.pxd)
@@ -132,7 +137,8 @@ bin_PROGRAMS = database_speed_test test \
 	trie_comparison \
 	save_acclog_fast \
 	hello_world_controller \
-	hello_world_server_main
+	hello_world_server_main \
+	signature_check_server_main
 
 all-local: xdrpy_module
 
@@ -180,6 +186,8 @@ save_acclog_fast_SOURCES = $(SRCS) save_acclog_fast.cc
 hello_world_controller_SOURCES = $(SRCS) hello_world_controller.cc
 
 hello_world_server_main_SOURCES = $(SRCS) hello_world_server_main.cc
+
+signature_check_server_main_SOURCES = $(SRCS) signature_check_server_main.cc
 
 CLEANFILES = $(SRC_X_FILES:.x=.h) $(SERVER_X_FILES:.x=.scaffold_h) $(SERVER_X_FILES:.x=.scaffold_cc) \
 	 $(SERVER_X_FILES:.x=.scaffold_h_async) $(SERVER_X_FILES:.x=.scaffold_cc_async)

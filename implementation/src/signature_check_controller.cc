@@ -80,6 +80,39 @@ int main(int argc, char const *argv[]) {
             }
         });
 
+    for (size_t i = 0; i < params.num_accounts; i++) {
+
+        //std::printf("%lu %s\n", account_id_list[i], DebugUtils::__array_to_str(pks.at(i).data(), pks[i].size()).c_str());
+        management_structures.db.add_account_to_db(account_id_list[i], pks[i]);
+    }
+
+    management_structures.db.commit(0);
+
+    BlockSignatureChecker checker(management_structures);
+
+    ExperimentBlock block;
+
+    std::string block_filename = experiment_root + std::string("/") + std::string(argv[2]) + std::string(".txs");
+
+    if (load_xdr_from_file(block, block_filename.c_str())) {
+        std::printf("%s\n", block_filename.c_str());
+        throw std::runtime_error("failed to load tx block");
+    }
+
+    SignedTransactionList tx_list;
+
+    tx_list.insert(tx_list.end(), block.begin(), block.end());
+
+    SerializedBlock serialized_block = xdr::xdr_to_opaque(tx_list);
+    
+    size_t num_threads = std::stoi(argv[3]);
+
+    auto timestamp = init_time_measurement();
+
+    float res = measure_time(timestamp);
+
+    std::printf("checked %lu sigs in %lf with max %lu threads\n", tx_list.size(), res, num_threads);
+
 
     poll_node(2);
 

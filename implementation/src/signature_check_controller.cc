@@ -11,10 +11,10 @@
 #include <vector>
 
 #include "crypto_utils.h"
-
 #include "utils.h"
-
 #include "xdr/experiments.h"
+#include "edce_management_structures.h"
+
 
 using namespace edce;
 
@@ -51,6 +51,25 @@ int main(int argc, char const *argv[]) {
     if (load_xdr_from_file(params, params_filename.c_str())) {
         throw std::runtime_error("failed to load params file");
     }
+
+    EdceManagementStructures management_structures(
+        20,
+        ApproximationParameters {
+            .tax_rate = 10,
+            .smooth_mult = 10
+        });
+
+    std::printf("num accounts: %lu\n", params.num_accounts);
+
+    AccountIDList account_id_list;
+
+    auto accounts_filename = experiment_root + std::string("/accounts");
+    if (load_xdr_from_file(account_id_list, accounts_filename.c_str())) {
+        throw std::runtime_error("failed to load accounts list " + accounts_filename);
+    }
+
+    std::vector<PublicKey> pks;
+    pks.resize(account_id_list.size());
 
 
     poll_node(2);

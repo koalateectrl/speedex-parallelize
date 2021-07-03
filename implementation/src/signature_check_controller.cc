@@ -22,9 +22,7 @@ poll_node(int idx) {
     auto fd = xdr::tcp_connect(hostname_from_idx(idx).c_str(), SIGNATURE_CHECK_PORT);
     auto client = xdr::srpc_client<SignatureCheckV1>(fd.get());
 
-    std::printf("printing hello world \n");
-    //client.print_hello_world();
-    bool return_value = client.check_all_signatures();
+    uint32_t return_value = *client.check_all_signatures();
     std::cout << return_value << std::endl;
 }
 

@@ -23,7 +23,7 @@ std::string hostname_from_idx(int idx) {
     return std::string("10.10.1.") + std::to_string(idx);
 }
 
-void
+uint32_t
 poll_node(int idx) {
     
     auto fd = xdr::tcp_connect(hostname_from_idx(idx).c_str(), SIGNATURE_CHECK_PORT);
@@ -31,6 +31,7 @@ poll_node(int idx) {
 
     uint32_t return_value = *client.check_all_signatures();
     std::cout << return_value << std::endl;
+    return return_value
 }
 
 
@@ -109,12 +110,13 @@ int main(int argc, char const *argv[]) {
 
     auto timestamp = init_time_measurement();
 
+    if (poll_node(2)) {
+        throw std::runtime_error("sig checking failed!!!");
+    }
+
     float res = measure_time(timestamp);
 
     std::printf("checked %lu sigs in %lf with max %lu threads\n", tx_list.size(), res, num_threads);
-
-
-    poll_node(2);
 
     return 0;
 

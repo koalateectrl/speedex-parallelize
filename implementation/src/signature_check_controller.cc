@@ -31,7 +31,7 @@ poll_node(int idx) {
 
     uint32_t return_value = *client.check_all_signatures();
     std::cout << return_value << std::endl;
-    return return_value
+    return return_value;
 }
 
 
@@ -81,7 +81,7 @@ int main(int argc, char const *argv[]) {
             }
         });
 
-    for (size_t i = 0; i < params.num_accounts; i++) {
+    for (int32_t i = 0; i < params.num_accounts; i++) {
 
         //std::printf("%lu %s\n", account_id_list[i], DebugUtils::__array_to_str(pks.at(i).data(), pks[i].size()).c_str());
         management_structures.db.add_account_to_db(account_id_list[i], pks[i]);

@@ -31,7 +31,7 @@ typedef string hostname<>;
 program SignatureCheck {
     version SignatureCheckV1 {
         void print_hello_world(void) = 1;
-        uint32 check_all_signatures(void) = 2;
+        uint32 check_all_signatures(SerializedBlock) = 2;
     } = 1;
 } = 0x11111116;
 

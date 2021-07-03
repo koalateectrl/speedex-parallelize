@@ -14,6 +14,7 @@
 #include "utils.h"
 #include "xdr/experiments.h"
 #include "edce_management_structures.h"
+#include "tbb/global_control.h"
 
 
 using namespace edce;
@@ -59,7 +60,7 @@ int main(int argc, char const *argv[]) {
             .smooth_mult = 10
         });
 
-    std::printf("num accounts: %lu\n", params.num_accounts);
+    std::printf("num accounts: %u\n", params.num_accounts);
 
     AccountIDList account_id_list;
 
@@ -70,6 +71,14 @@ int main(int argc, char const *argv[]) {
 
     std::vector<PublicKey> pks;
     pks.resize(account_id_list.size());
+    tbb::parallel_for(
+        tbb::blocked_range<size_t>(0, account_id_list.size()),
+        [&key_gen, &account_id_list, &pks](auto r) {
+            for (size_t i = r.begin(); i < r.end(); i++) {
+                auto [_, pk] = key_gen.deterministic_key_gen(account_id_list[i]);
+                pks[i] = pk;
+            }
+        });
 
 
     poll_node(2);

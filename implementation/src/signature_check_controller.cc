@@ -12,6 +12,10 @@
 
 #include "crypto_utils.h"
 
+#include "utils.h"
+
+#include "xdr/experiments.h"
+
 using namespace edce;
 
 std::string hostname_from_idx(int idx) {
@@ -38,9 +42,39 @@ int main(int argc, char const *argv[]) {
 
     DeterministicKeyGenerator key_gen;
 
+    ExperimentParameters params;
+
+    std::string experiment_root = std::string("experiment_data/") + std::string(argv[1]);
+
+    std::string params_filename = experiment_root + std::string("/params");
+
+    if (load_xdr_from_file(params, params_filename.c_str())) {
+        throw std::runtime_error("failed to load params file");
+    }
+
 
     poll_node(2);
 
     return 0;
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

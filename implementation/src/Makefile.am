@@ -78,7 +78,7 @@ MAIN_CCS = synthetic_data_generator/aberrant_datasets_gen.cc \
 	synthetic_data_generator/synthetic_data_gen_from_params.cc \
 	tatonnement_sim.cc trie_comparison.cc save_acclog_fast.cc \
 	hello_world_controller.cc hello_world_server_main.cc \
-	signature_check_server_main.cc
+	signature_check_controller.cc signature_check_server_main.cc
 
 
 $(MAIN_CCS:.cc=.o) : $(SRC_X_FILES:.x=.h)
@@ -138,6 +138,7 @@ bin_PROGRAMS = database_speed_test test \
 	save_acclog_fast \
 	hello_world_controller \
 	hello_world_server_main \
+	signature_check_controller \
 	signature_check_server_main
 
 all-local: xdrpy_module
@@ -186,6 +187,8 @@ save_acclog_fast_SOURCES = $(SRCS) save_acclog_fast.cc
 hello_world_controller_SOURCES = $(SRCS) hello_world_controller.cc
 
 hello_world_server_main_SOURCES = $(SRCS) hello_world_server_main.cc
+
+signature_check_controller_SOURCES = $(SRCS) signature_check_controller.cc
 
 signature_check_server_main_SOURCES = $(SRCS) signature_check_server_main.cc
 

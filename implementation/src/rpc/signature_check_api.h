@@ -15,6 +15,8 @@ public:
   SignatureCheckV1_server() {};
 
   void print_hello_world();
+
+  bool check_all_signatures();
 };
 
 }

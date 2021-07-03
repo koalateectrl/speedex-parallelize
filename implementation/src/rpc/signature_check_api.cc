@@ -13,4 +13,11 @@ SignatureCheckV1_server::print_hello_world()
   std::cout << "Hello World" << std::endl;
 }
 
+bool
+SignatureCheckV1_server::check_all_signatures()
+{
+  return true;
+}
+
+
 }

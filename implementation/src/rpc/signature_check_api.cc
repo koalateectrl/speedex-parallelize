@@ -14,7 +14,7 @@ SignatureCheckV1_server::print_hello_world()
 }
 
 std::unique_ptr<unsigned int>
-SignatureCheckV1_server::check_all_signatures()
+SignatureCheckV1_server::check_all_signatures(const SerializedBlock& block)
 {
   return std::make_unique<unsigned int>(1);
 }

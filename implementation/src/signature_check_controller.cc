@@ -10,6 +10,8 @@
 #include <cstdint>
 #include <vector>
 
+#include "crypto_utils.h"
+
 using namespace edce;
 
 std::string hostname_from_idx(int idx) {
@@ -29,14 +31,15 @@ poll_node(int idx) {
 
 int main(int argc, char const *argv[]) {
 
-    if (argc != 1) {
-        std::printf("usage: ./signature_check_controller \n");
-        return 0;
+    if (argc != 4) {
+        std::printf("usage: ./signature_check_controller experiment_name block_number num_threads\n");
+        return -1;
     }
 
-    if (argc == 1) {
-        poll_node(2);
-    }
+    DeterministicKeyGenerator key_gen;
+
+
+    poll_node(2);
 
     return 0;
 

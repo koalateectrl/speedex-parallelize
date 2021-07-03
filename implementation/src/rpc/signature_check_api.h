@@ -16,7 +16,7 @@ public:
 
   void print_hello_world();
 
-  bool check_all_signatures();
+  std::unique_ptr<unsigned int> check_all_signatures();
 };
 
 }

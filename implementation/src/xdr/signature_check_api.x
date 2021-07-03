@@ -32,6 +32,6 @@ program SignatureCheck {
     version SignatureCheckV1 {
         void print_hello_world(void) = 1;
     } = 1;
-} = 0x11111115;
+} = 0x11111116;
 
 }

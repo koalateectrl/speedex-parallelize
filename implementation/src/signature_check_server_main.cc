@@ -11,7 +11,7 @@ int main(int argc, char const *argv[]) {
     }
 
     if (argc == 1) {
-        SignatureCheckApiServer signaturecheck_server;
+        SignatureCheckApiServer signature_check_server;
     }
 
     return 0;

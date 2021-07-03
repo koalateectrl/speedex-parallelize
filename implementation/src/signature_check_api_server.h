@@ -16,11 +16,11 @@ class SignatureCheckApiServer {
 
     using SignatureCheck = SignatureCheckV1_server;
 
-    SignatureCheck signaturecheck_server;
+    SignatureCheck signature_check_server;
 
     xdr::pollset ps;
 
-    xdr::srpc_tcp_listener<> signaturecheck_listener;
+    xdr::srpc_tcp_listener<> signature_check_listener;
 
 public:
 

@@ -16,7 +16,7 @@ SignatureCheckV1_server::print_hello_world()
 }
 
 std::unique_ptr<unsigned int>
-SignatureCheckV1_server::check_all_signatures(const BlockSignatureChecker& checker, const SerializedBlock& block, const uint64& num_threads)
+SignatureCheckV1_server::check_all_signatures(const SerializedBlock& block, const uint64& num_threads)
 {
   tbb::global_control control(
     tbb::global_control::max_allowed_parallelism, num_threads);

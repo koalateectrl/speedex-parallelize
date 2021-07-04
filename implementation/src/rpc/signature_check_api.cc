@@ -79,11 +79,10 @@ SignatureCheckV1_server::check_all_signatures(const std::string& experiment_name
     tbb::global_control::max_allowed_parallelism, num_threads);
 
   if (!checker.check_all_sigs(block)) {
-    throw std::runtime_error("sig checking failed!!!");
+    return std::make_unique<unsigned int>(1);
   }
 
-
-  return std::make_unique<unsigned int>(1);
+  return std::make_unique<unsigned int>(0);
 }
 
 

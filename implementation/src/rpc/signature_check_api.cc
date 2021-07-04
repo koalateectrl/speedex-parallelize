@@ -28,9 +28,9 @@ SignatureCheckV1_server::check_all_signatures(const std::string& experiment_name
 {
   DeterministicKeyGenerator key_gen;
 
-  Experiment Parameters params;
+  ExperimentParameters params;
 
-  std::string experiment_root = std::string("experiment_data/") + std::string(argv[1]);
+  std::string experiment_root = std::string("experiment_data/") + experiment_name;
 
   std::string params_filename = experiment_root + std::string("/params");
 
@@ -78,7 +78,7 @@ SignatureCheckV1_server::check_all_signatures(const std::string& experiment_name
   tbb::global_control control(
     tbb::global_control::max_allowed_parallelism, num_threads);
 
-  if (!checker.check_all_sigs(serialized_block)) {
+  if (!checker.check_all_sigs(block)) {
     throw std::runtime_error("sig checking failed!!!");
   }
 

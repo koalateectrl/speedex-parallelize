@@ -24,13 +24,14 @@ std::string hostname_from_idx(int idx) {
 }
 
 uint32_t
-poll_node(int idx, const SerializedBlock& block, const uint64& num_threads) {
+poll_node(int idx, const std::string& experiment_name, 
+    const SerializedBlock& block, const uint64& num_threads) {
     
     auto fd = xdr::tcp_connect(hostname_from_idx(idx).c_str(), SIGNATURE_CHECK_PORT);
     auto client = xdr::srpc_client<SignatureCheckV1>(fd.get());
 
     // if works return 0 else if failed return 1
-    uint32_t return_value = *client.check_all_signatures(block, num_threads);
+    uint32_t return_value = *client.check_all_signatures(experiment_name, block, num_threads);
     std::cout << return_value << std::endl;
     return return_value;
 }
@@ -43,54 +44,7 @@ int main(int argc, char const *argv[]) {
         return -1;
     }
 
-    DeterministicKeyGenerator key_gen;
-
-    ExperimentParameters params;
-
     std::string experiment_root = std::string("experiment_data/") + std::string(argv[1]);
-
-    std::string params_filename = experiment_root + std::string("/params");
-
-    if (load_xdr_from_file(params, params_filename.c_str())) {
-        throw std::runtime_error("failed to load params file");
-    }
-
-    EdceManagementStructures management_structures(
-        20,
-        ApproximationParameters {
-            .tax_rate = 10,
-            .smooth_mult = 10
-        });
-
-    std::printf("num accounts: %u\n", params.num_accounts);
-
-    AccountIDList account_id_list;
-
-    auto accounts_filename = experiment_root + std::string("/accounts");
-    if (load_xdr_from_file(account_id_list, accounts_filename.c_str())) {
-        throw std::runtime_error("failed to load accounts list " + accounts_filename);
-    }
-
-    std::vector<PublicKey> pks;
-    pks.resize(account_id_list.size());
-    tbb::parallel_for(
-        tbb::blocked_range<size_t>(0, account_id_list.size()),
-        [&key_gen, &account_id_list, &pks](auto r) {
-            for (size_t i = r.begin(); i < r.end(); i++) {
-                auto [_, pk] = key_gen.deterministic_key_gen(account_id_list[i]);
-                pks[i] = pk;
-            }
-        });
-
-    for (int32_t i = 0; i < params.num_accounts; i++) {
-
-        //std::printf("%lu %s\n", account_id_list[i], DebugUtils::__array_to_str(pks.at(i).data(), pks[i].size()).c_str());
-        management_structures.db.add_account_to_db(account_id_list[i], pks[i]);
-    }
-
-    management_structures.db.commit(0);
-
-    BlockSignatureChecker checker(management_structures);
 
     ExperimentBlock block;
 
@@ -111,7 +65,7 @@ int main(int argc, char const *argv[]) {
 
     auto timestamp = init_time_measurement();
 
-    if (poll_node(2, serialized_block, num_threads)) {
+    if (poll_node(2, std::string(argv[1]), serialized_block, num_threads)) {
         throw std::runtime_error("sig checking failed!!!");
     }
 

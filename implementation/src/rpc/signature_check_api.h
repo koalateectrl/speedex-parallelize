@@ -16,7 +16,8 @@ public:
 
   void print_hello_world();
 
-  std::unique_ptr<unsigned int> check_all_signatures(const SerializedBlock& block, const uint64& num_threads);
+  std::unique_ptr<unsigned int> check_all_signatures(const std::string& experiment_name, 
+    const SerializedBlock& block, const uint64& num_threads);
 };
 
 }

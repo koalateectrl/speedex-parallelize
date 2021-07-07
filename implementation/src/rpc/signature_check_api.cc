@@ -16,6 +16,10 @@
 
 namespace edce {
 
+SignatureCheckV1_server::SignatureCheckV1_server()
+  : management_structures(EdceManagementStructures{20, ApproximationParameters {.tax_rate = 10, .smooth_mult = 10}}) {}
+  , checker(BlockSignatureChecker{management_structures}) {}
+
 //not rpc
 void 
 SignatureCheckV1_server::load_experiment(const std::string& experiment_name) {
@@ -31,12 +35,13 @@ SignatureCheckV1_server::load_experiment(const std::string& experiment_name) {
     throw std::runtime_error("failed to load params file");
   }
 
+  /*
   EdceManagementStructures management_structures(
     20,
     ApproximationParameters {
       .tax_rate = 10,
       .smooth_mult = 10
-    });
+    });*/
 
   std::printf("num accounts: %u\n", params.num_accounts);
 
@@ -103,12 +108,13 @@ SignatureCheckV1_server::check_all_signatures(const std::string& experiment_name
     throw std::runtime_error("failed to load params file");
   }
 
+  /*
   EdceManagementStructures management_structures(
     20,
     ApproximationParameters {
       .tax_rate = 10,
       .smooth_mult = 10
-    });
+    }); */
 
   std::printf("num accounts: %u\n", params.num_accounts);
 
@@ -138,9 +144,9 @@ SignatureCheckV1_server::check_all_signatures(const std::string& experiment_name
 
   management_structures.db.commit(0);
 
-
+  /*
   BlockSignatureChecker checker(management_structures);
-
+  */
   tbb::global_control control(
     tbb::global_control::max_allowed_parallelism, num_threads);
 

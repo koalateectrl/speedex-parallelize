@@ -11,11 +11,13 @@ namespace edce {
 class SignatureCheckV1_server {
   std::atomic<bool> experiment_loaded = false;
   std::vector<PublicKey> pks;
+  EdceManagementStructures management_structures;
+  BlockSignatureChecker checker;
 
 public:
   using rpc_interface_type = SignatureCheckV1;
 
-  SignatureCheckV1_server() {};
+  SignatureCheckV1_server();
 
   void print_hello_world();
 

@@ -11,7 +11,7 @@ int main(int argc, char const *argv[]) {
     }
 
     if (argc == 2) {
-        SignatureCheckApiServer signature_check_server(std::string(argv[1]));
+        SignatureCheckApiServer signature_check_server;
     }
 
     return 0;

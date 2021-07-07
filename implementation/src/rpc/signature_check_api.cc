@@ -17,7 +17,7 @@
 namespace edce {
 
 SignatureCheckV1_server::SignatureCheckV1_server()
-  : management_structures(EdceManagementStructures{20, ApproximationParameters {.tax_rate = 10, .smooth_mult = 10}}) {}
+  : management_structures(EdceManagementStructures{20, ApproximationParameters {.tax_rate = 10, .smooth_mult = 10}})
   , checker(BlockSignatureChecker{management_structures}) {}
 
 //not rpc

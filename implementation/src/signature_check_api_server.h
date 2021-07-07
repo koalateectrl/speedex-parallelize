@@ -24,7 +24,7 @@ class SignatureCheckApiServer {
 
 public:
 
-    SignatureCheckApiServer();
+    SignatureCheckApiServer(std::string& experiment_name);
 
 };
 

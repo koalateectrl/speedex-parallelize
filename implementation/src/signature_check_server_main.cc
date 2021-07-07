@@ -5,13 +5,13 @@ using namespace edce;
     
 int main(int argc, char const *argv[]) {
 
-    if (argc != 1) {
-        std::printf("usage: ./signature_check_server_main \n");
+    if (argc != 2) {
+        std::printf("usage: ./signature_check_server_main experiment_name\n");
         return 0;
     }
 
-    if (argc == 1) {
-        SignatureCheckApiServer signature_check_server;
+    if (argc == 2) {
+        SignatureCheckApiServer signature_check_server(std::string(argv[1]));
     }
 
     return 0;

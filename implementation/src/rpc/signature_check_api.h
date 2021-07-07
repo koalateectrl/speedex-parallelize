@@ -15,7 +15,7 @@ class SignatureCheckV1_server {
 public:
   using rpc_interface_type = SignatureCheckV1;
 
-  SignatureCheckV1_server() {};
+  SignatureCheckV1_server(std::string& experiment_name) {};
 
   void print_hello_world();
 

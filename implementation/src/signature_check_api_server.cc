@@ -2,8 +2,9 @@
 
 namespace edce {
 
-SignatureCheckApiServer::SignatureCheckApiServer()
+SignatureCheckApiServer::SignatureCheckApiServer(std::string& experiment_name)
     : ps()
+    , signature_check_server(experiment_name)
     , signature_check_listener(ps, xdr::tcp_listen(SIGNATURE_CHECK_PORT, AF_INET), false, xdr::session_allocator<void>()) {
         signature_check_listener.register_service(signature_check_server);
 

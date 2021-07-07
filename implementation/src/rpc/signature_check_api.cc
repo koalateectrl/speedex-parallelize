@@ -87,7 +87,7 @@ SignatureCheckV1_server::check_all_signatures(const std::string& experiment_name
       load_experiment();
     } catch (const std::string& err_msg) {
       std::printf(err_msg);
-      return;
+      return std::make_unique<unsigned int>(1);
     }
   }
 

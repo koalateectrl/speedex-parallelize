@@ -27,7 +27,7 @@ public:
     return experiment_loaded;
   }
 
-  void load_experiment();
+  void load_experiment(const std::string& experiment_name);
 
 };
 

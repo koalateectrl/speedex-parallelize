@@ -17,8 +17,8 @@
 namespace edce {
 
 //not rpc
-
-void load_experiment(const std::string& experiment_name) {
+void 
+SignatureCheckV1_server::load_experiment(const std::string& experiment_name) {
   DeterministicKeyGenerator key_gen;
 
   ExperimentParameters params;
@@ -86,7 +86,7 @@ SignatureCheckV1_server::check_all_signatures(const std::string& experiment_name
     try {
       load_experiment();
     } catch (const std::string& err_msg) {
-      std::printf(err_msg);
+      std::printf(err_msg.c_str());
       return std::make_unique<unsigned int>(1);
     }
   }

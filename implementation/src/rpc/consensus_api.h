@@ -159,45 +159,4 @@ public:
   void wait_for_upstream_finish();
 };
 
-// Sam created code
-
-class SignatureCheckingV1_server {
-  EdceNode& main_node;
-  std::mutex wait_mtx;
-  std::condition_variable wait_cv;
-  bool wakeable = false;
-
-  std::atomic<bool> experiment_finished = false;
-  std::atomic<bool> experiment_ready_to_start = false;
-
-  std::atomic<bool> upstream_finished = false;
-public:
-  using rpc_interface_type = SignatureCheckingV1;
-  
-  SignatureCheckingV1_server(EdceNode& main_node) : main_node(main_node) {};
-
-  void write_measurements();
-
-  void signal_start();
-
-  std::unique_ptr<ExperimentResultsUnion> get_measurements();
-
-  std::unique_ptr<unsigned int> is_running(); // returns a boolean : 0 if not running (done), 1 if running
-
-  std::unique_ptr<unsigned int> is_ready_to_start(); //returns boolean : 1 if ready, 0 if not.
-
-  void signal_upstream_finish();
-
-  //not rpc
-  void wait_for_start();
-  void set_experiment_done() {
-    experiment_finished = true;
-  }
-  void set_experiment_ready_to_start() {
-    experiment_ready_to_start = true;
-  }
-
-  void wait_for_upstream_finish();
-};
-
 }

@@ -9,6 +9,8 @@
 namespace edce {
 
 class SignatureCheckV1_server {
+  std::atomic<bool> experiment_loaded = false;
+
 public:
   using rpc_interface_type = SignatureCheckV1;
 
@@ -18,6 +20,16 @@ public:
 
   std::unique_ptr<unsigned int> check_all_signatures(const std::string& experiment_name, 
     const SerializedBlock& block, const uint64& num_threads);
+
+  //not rpc
+  bool is_experiment_loaded() {
+    return experiment_loaded;
+  }
+
+  void load_experiment() {
+    experiment_loaded = true;
+  }
+
 };
 
 }

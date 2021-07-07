@@ -26,6 +26,10 @@ std::unique_ptr<unsigned int>
 SignatureCheckV1_server::check_all_signatures(const std::string& experiment_name, 
   const SerializedBlock& block, const uint64& num_threads)
 {
+  std::cout << is_experiment_loaded() << std::endl;
+
+  load_experiment();
+
   DeterministicKeyGenerator key_gen;
 
   ExperimentParameters params;

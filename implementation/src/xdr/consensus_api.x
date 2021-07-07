@@ -58,15 +58,4 @@ program ExperimentControl {
 	} = 1;
 } = 0x11111113;
 
-program SignatureChecking {
-	version SignatureCheckingV1 {
-		void write_measurements(void) = 1;
-		void signal_start(void) = 2;
-		ExperimentResultsUnion get_measurements(void) = 3;
-		uint32 is_running(void) = 4;
-		uint32 is_ready_to_start(void) = 5;
-		void signal_upstream_finish(void) = 6;
-	} = 1;
-} = 0x11111114;
-
 }

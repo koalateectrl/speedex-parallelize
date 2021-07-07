@@ -10,6 +10,7 @@ namespace edce {
 
 class SignatureCheckV1_server {
   std::atomic<bool> experiment_loaded = false;
+  std::vector<PublicKey> pks;
 
 public:
   using rpc_interface_type = SignatureCheckV1;
@@ -26,9 +27,7 @@ public:
     return experiment_loaded;
   }
 
-  void load_experiment() {
-    experiment_loaded = true;
-  }
+  void load_experiment();
 
 };
 

@@ -65,7 +65,7 @@ int main(int argc, char const *argv[]) {
 
     auto timestamp = init_time_measurement();
 
-    if (poll_node(2, std::string(argv[1]), serialized_block, num_threads)) {
+    if (poll_node(2, std::string(argv[1]), serialized_block, num_threads) == 1) {
         throw std::runtime_error("sig checking failed!!!");
     }
 

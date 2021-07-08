@@ -12,6 +12,8 @@
 namespace edce
 {
 
+const MAX_TRANSACTIONS_PER_BLOCK = 1000000;
+
 typedef unsigned int uint32;
 typedef int int32;
 
@@ -30,6 +32,8 @@ typedef opaque uint256[32];
 typedef opaque Signature[64]; //ed25519 sig len is 512 bits
 typedef opaque PublicKey[32]; //ed25519 key len is 256 bits
 typedef opaque Hash[32]; // 256 bit hash, i.e. output of sha256
+
+typedef PublicKey PublicKeyList<MAX_TRANSACTIONS_PER_BLOCK>;
 
 enum OfferType
 {

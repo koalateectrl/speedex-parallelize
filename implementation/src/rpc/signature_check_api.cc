@@ -65,8 +65,6 @@ SignatureCheckV1_server::load_experiment(const std::string& experiment_name) {
   experiment_loaded = true;
 }
 
-
-
 //rpc
 
 void
@@ -87,7 +85,7 @@ SignatureCheckV1_server::check_all_signatures(const std::string& experiment_name
       return std::make_unique<unsigned int>(1);
     }
   }
-  
+
   tbb::global_control control(
     tbb::global_control::max_allowed_parallelism, num_threads);
 

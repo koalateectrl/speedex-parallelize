@@ -32,9 +32,9 @@ public:
 
 			// -------DELETE THIS CODE------------
 			std::cout << "SAM CHECK" << std::endl;
-			std::cout << block[i].tranasction << std::endl;
-			std::cout << block[i].signature << std::endl;
-			std::cout << pks[i] << std::endl;
+			std::printf(block[i].transaction);
+			std::printf(block[i].signature);
+			std::printf(*pk_opt);
 			// -----------------------------------
 
 			if (!sig_check(block[i].transaction, block[i].signature, pks[i])) {
@@ -103,9 +103,9 @@ public:
 
 			// -------DELETE THIS CODE------------
 			std::cout << "ORIGINAL CHECK" << std::endl;
-			std::cout << block[i].tranasction << std::endl;
-			std::cout << block[i].signature << std::endl;
-			std::cout << *pk_opt << std::endl;
+			std::printf(block[i].transaction);
+			std::printf(block[i].signature);
+			std::printf(*pk_opt);
 			// -----------------------------------
 
 			if (!sig_check(block[i].transaction, block[i].signature, *pk_opt)) {

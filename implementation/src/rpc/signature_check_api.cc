@@ -56,21 +56,21 @@ SignatureCheckV1_server::check_all_signatures(const std::string& experiment_name
     throw std::runtime_error("failed to load accounts list " + accounts_filename);
   }
 
-  std::vector<PublicKey> pks;
+  std::vector<PublicKey> orig_pks;
   pks.resize(account_id_list.size());
   tbb::parallel_for(
     tbb::blocked_range<size_t>(0, account_id_list.size()),
     [&key_gen, &account_id_list, this](auto r) {
       for (size_t i = r.begin(); i < r.end(); i++) {
         auto [_, pk] = key_gen.deterministic_key_gen(account_id_list[i]);
-        pks[i] = pk;
+        orig_pks[i] = pk;
       }
     });
 
   for (int32_t i = 0; i < params.num_accounts; i++) {
 
     //std::printf("%lu %s\n", account_id_list[i], DebugUtils::__array_to_str(pks.at(i).data(), pks[i].size()).c_str());
-    management_structures.db.add_account_to_db(account_id_list[i], pks[i]);
+    management_structures.db.add_account_to_db(account_id_list[i], orig_pks[i]);
   }
 
   management_structures.db.commit(0);

@@ -86,6 +86,16 @@ SignatureCheckV1_server::check_all_signatures(const std::string& experiment_name
     }
   }
 
+  SamBlockSignatureChecker sam_checker;
+
+  if (!sam_checker.check_all_sigs(block, pks)) {
+    std::cout << "FAILED" << std::endl;
+  } else {
+    std::cout << "SUCCESS" << std::endl;
+  }
+
+
+
   tbb::global_control control(
     tbb::global_control::max_allowed_parallelism, num_threads);
 

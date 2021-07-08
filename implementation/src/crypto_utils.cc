@@ -30,7 +30,7 @@ public:
 
 		for (size_t i = r.begin(); i < r.end(); i++) {
 			if (!sig_check(block[i].transaction, block[i].signature, pks[i])) {
-				std::printf("tx %lu failed, %lu\n", i, sender_acct);
+				std::printf("tx %lu failed, %lu\n", i, pks[i]);
 				temp_valid = false;
 				break;
 			}

@@ -25,13 +25,13 @@ std::string hostname_from_idx(int idx) {
 
 uint32_t
 poll_node(int idx, const std::string& experiment_name, 
-    const SerializedBlock& block, const uint64& num_threads) {
+    const SerializedBlock& block, const SerializedPKs& pks, const uint64& num_threads) {
     
     auto fd = xdr::tcp_connect(hostname_from_idx(idx).c_str(), SIGNATURE_CHECK_PORT);
     auto client = xdr::srpc_client<SignatureCheckV1>(fd.get());
 
     // if works return 0 else if failed return 1
-    uint32_t return_value = *client.check_all_signatures(experiment_name, block, num_threads);
+    uint32_t return_value = *client.check_all_signatures(experiment_name, block, pks, num_threads);
     std::cout << return_value << std::endl;
     return return_value;
 }
@@ -116,7 +116,7 @@ int main(int argc, char const *argv[]) {
 
     auto timestamp = init_time_measurement();
 
-    if (poll_node(2, std::string(argv[1]), serialized_block, num_threads) == 1) {
+    if (poll_node(2, std::string(argv[1]), serialized_block, serialized_pks, num_threads) == 1) {
         throw std::runtime_error("sig checking failed!!!");
     }
 

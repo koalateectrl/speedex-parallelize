@@ -16,51 +16,6 @@
 
 namespace edce {
 
-//not rpc
-void 
-SignatureCheckV1_server::load_experiment(const std::string& experiment_name) {
-  DeterministicKeyGenerator key_gen;
-
-  ExperimentParameters params;
-
-  std::string experiment_root = std::string("experiment_data/") + experiment_name;
-
-  std::string params_filename = experiment_root + std::string("/params");
-
-  if (load_xdr_from_file(params, params_filename.c_str())) {
-    throw std::runtime_error("failed to load params file");
-  }
-
-  std::printf("num accounts: %u\n", params.num_accounts);
-
-  AccountIDList account_id_list;
-
-  auto accounts_filename = experiment_root + std::string("/accounts");
-  if (load_xdr_from_file(account_id_list, accounts_filename.c_str())) {
-    throw std::runtime_error("failed to load accounts list " + accounts_filename);
-  }
-
-  pks.resize(account_id_list.size());
-  tbb::parallel_for(
-    tbb::blocked_range<size_t>(0, account_id_list.size()),
-    [&key_gen, &account_id_list, this](auto r) {
-      for (size_t i = r.begin(); i < r.end(); i++) {
-        auto [_, pk] = key_gen.deterministic_key_gen(account_id_list[i]);
-        pks[i] = pk;
-      }
-    });
-
-  for (int32_t i = 0; i < params.num_accounts; i++) {
-
-    //std::printf("%lu %s\n", account_id_list[i], DebugUtils::__array_to_str(pks.at(i).data(), pks[i].size()).c_str());
-    management_structures.db.add_account_to_db(account_id_list[i], pks[i]);
-  }
-
-  management_structures.db.commit(0);
-
-  experiment_loaded = true;
-}
-
 //rpc
 
 void

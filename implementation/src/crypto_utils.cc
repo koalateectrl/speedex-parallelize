@@ -29,6 +29,14 @@ public:
 		bool temp_valid = true;
 
 		for (size_t i = r.begin(); i < r.end(); i++) {
+
+			// -------DELETE THIS CODE------------
+			std::cout << "SAM CHECK" << std::endl;
+			std::cout << block[i].tranasction << std::endl;
+			std::cout << block[i].signature << std::endl;
+			std::cout << pks[i] << std::endl;
+			// -----------------------------------
+
 			if (!sig_check(block[i].transaction, block[i].signature, pks[i])) {
 				std::printf("tx %lu failed, %lu\n", i, pks[i]);
 				temp_valid = false;
@@ -65,7 +73,7 @@ SamBlockSignatureChecker::check_all_sigs(const SerializedBlock& block, const Ser
 
 	auto checker = SamSigCheckReduce(txs, pk_list);
 
-	tbb::parallel_reduce(tbb::blocked_range<size_t>(0, txs.size(), 2000), checker);
+	tbb::parallel_reduce(tbb::blocked_range<size_t>(0, 5, 2000), checker); // change 5 to txs.size()
 
 	return checker.valid;
 }
@@ -92,6 +100,14 @@ public:
 				temp_valid = false;
 				break;
 			}
+
+			// -------DELETE THIS CODE------------
+			std::cout << "ORIGINAL CHECK" << std::endl;
+			std::cout << block[i].tranasction << std::endl;
+			std::cout << block[i].signature << std::endl;
+			std::cout << *pk_opt << std::endl;
+			// -----------------------------------
+
 			if (!sig_check(block[i].transaction, block[i].signature, *pk_opt)) {
 				std::printf("tx %lu failed, %lu\n", i, sender_acct);
 				temp_valid = false;
@@ -124,7 +140,7 @@ BlockSignatureChecker::check_all_sigs(const SerializedBlock& block) {
 
 	auto checker = SigCheckReduce(management_structures, txs);
 
-	tbb::parallel_reduce(tbb::blocked_range<size_t>(0, txs.size(), 2000), checker);
+	tbb::parallel_reduce(tbb::blocked_range<size_t>(0, 5, 2000), checker); // change from 5 to txs.size()
 
 	return checker.valid;
 }

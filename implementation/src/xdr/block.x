@@ -34,6 +34,9 @@ typedef SignedTransaction SignedTransactionList<MAX_TRANSACTIONS_PER_BLOCK>;
 // payload is SignedTransactionList
 typedef opaque SerializedBlock<>;
 
+// payload is PublicKeyList
+typedef opaque SerializedPKs<>;
+
 //struct PartialMiniblock {
 //	union switch(bool exists) {
 //		case 0:

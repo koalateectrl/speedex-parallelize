@@ -57,7 +57,7 @@ SignatureCheckV1_server::check_all_signatures(const std::string& experiment_name
   }
 
   std::vector<PublicKey> orig_pks;
-  pks.resize(account_id_list.size());
+  orig_pks.resize(account_id_list.size());
   tbb::parallel_for(
     tbb::blocked_range<size_t>(0, account_id_list.size()),
     [&key_gen, &account_id_list, &orig_pks](auto r) {

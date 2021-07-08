@@ -75,7 +75,7 @@ SignatureCheckV1_server::print_hello_world()
 
 std::unique_ptr<unsigned int>
 SignatureCheckV1_server::check_all_signatures(const std::string& experiment_name, 
-  const SerializedBlock& block, const uint64& num_threads)
+  const SerializedBlock& block, const SerializedPKs& pks, const uint64& num_threads)
 {
   if (!is_experiment_loaded()) {
     try {

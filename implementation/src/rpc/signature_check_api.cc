@@ -60,7 +60,7 @@ SignatureCheckV1_server::check_all_signatures(const std::string& experiment_name
   pks.resize(account_id_list.size());
   tbb::parallel_for(
     tbb::blocked_range<size_t>(0, account_id_list.size()),
-    [&key_gen, &account_id_list, this](auto r) {
+    [&key_gen, &account_id_list, &orig_pks](auto r) {
       for (size_t i = r.begin(); i < r.end(); i++) {
         auto [_, pk] = key_gen.deterministic_key_gen(account_id_list[i]);
         orig_pks[i] = pk;

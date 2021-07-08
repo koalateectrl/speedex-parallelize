@@ -10,6 +10,17 @@
 
 namespace edce {
 
+class SamBlockSignatureChecker {
+public:
+	SamBlockSignatureChecker() {
+		if (sodium_init() == -1) {
+			throw std::runtime_error("coud not init sodium");
+		}
+	}
+
+	bool check_all_sigs(const SerializedBlock& block, const SerializedPKs& pks);
+};
+
 class BlockSignatureChecker {
 
 	EdceManagementStructures& management_structures;

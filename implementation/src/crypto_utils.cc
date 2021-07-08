@@ -17,6 +17,59 @@ bool sig_check(const xdr_type& data, const Signature& sig, const PublicKey& pk) 
 	return crypto_sign_verify_detached(sig.data(), buf.data(), buf.size(), pk.data()) == 0;
 }
 
+class SamSigCheckReduce {
+	const SignedTransactionList& block;
+	const PublicKeyList& pks;
+public:
+
+	bool valid = true;
+	void operator() (const tbb::blocked_range<size_t> r) {
+		if (!valid) return;
+
+		bool temp_valid = true;
+
+		for (size_t i = r.begin(); i < r.end(); i++) {
+			if (!sig_check(block[i].transaction, block[i].signature, pks[i])) {
+				std::printf("tx %lu failed, %lu\n", i, sender_acct);
+				temp_valid = false;
+				break;
+			}
+		}
+
+		valid = valid && temp_valid;
+	}
+
+	SamSigCheckReduce(
+		const SignedTransactionList& block,
+		const PublicKeyList& pks)
+	: block(block)
+	, pks(pks) {}
+
+	SamSigCheckReduce(SamSigCheckReduce& other, tbb::split)
+	: block(other.block)
+	, pks(other.pks) {}
+
+	void join(SamSigCheckReduce& other) {
+		valid = valid && other.valid;
+	}
+
+};
+
+bool
+SamBlockSignatureChecker::check_all_sigs(const SerializedBlock& block, const SerializedPKs& pks) {
+	SignedTransactionList txs;
+	xdr::xdr_from_opaque(block, txs);
+
+	PublicKeyList pk_list;
+	xdr::xdr_from_opaque(pks, pk_list);
+
+	auto checker = SamSigCheckReduce(txs, pk_list);
+
+	tbb::parallel_reduce(tbb::blocked_range<size_t>(0, txs.size(), 2000), checker);
+
+	return checker.valid;
+}
+
 class SigCheckReduce {
 	const EdceManagementStructures& management_structures;
 	const SignedTransactionList& block;

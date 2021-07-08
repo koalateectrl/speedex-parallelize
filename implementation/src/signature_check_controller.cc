@@ -44,7 +44,57 @@ int main(int argc, char const *argv[]) {
         return -1;
     }
 
+    DeterministicKeyGenerator key_gen;
+
+    ExperimentParameters params;
+
     std::string experiment_root = std::string("experiment_data/") + std::string(argv[1]);
+
+    std::string params_filename = experiment_root + std::string("/params");
+
+    if (load_xdr_from_file(params, params_filename.c_str())) {
+        throw std::runtime_error("failed to load params file");
+    }
+
+    EdceManagementStructures management_structures(
+        20,
+        ApproximationParameters {
+            .tax_rate = 10,
+            .smooth_mult = 10
+        });
+
+    std::printf("num accounts: %lu\n", params.num_accounts);
+
+    AccountIDList account_id_list;
+
+    auto accounts_filename = experiment_root + std::string("/accounts");
+    if (load_xdr_from_file(account_id_list, accounts_filename.c_str())) {
+        throw std::runtime_error("failed to load accounts list " + accounts_filename);
+    }
+
+    std::vector<PublicKey> pks;
+    pks.resize(account_id_list.size());
+    tbb::parallel_for(
+        tbb::blocked_range<size_t>(0, account_id_list.size()),
+        [&key_gen, &account_id_list, &pks](auto r) {
+            for (size_t i = r.begin(); i < r.end(); i++) {
+                auto [_, pk] = key_gen.deterministic_key_gen(account_id_list[i]);
+                pks[i] = pk;
+            }
+        });
+
+    for (size_t i = 0; i < params.num_accounts; i++) {
+
+        //std::printf("%lu %s\n", account_id_list[i], DebugUtils::__array_to_str(pks.at(i).data(), pks[i].size()).c_str());
+        management_structures.db.add_account_to_db(account_id_list[i], pks[i]);
+    }
+
+    management_structures.db.commit(0);
+
+    PublicKeyList pk_list;
+
+    pk_list.insert(pk_list.end(), pks.begin(), pks.end());
+
 
     ExperimentBlock block;
 

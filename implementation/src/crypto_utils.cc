@@ -35,15 +35,21 @@ public:
 			std::cout << "SAM CHECK" << std::endl;
 			std::printf("%lu\n", block[i].transaction.metadata.sourceAccount);
 
+			std::printf("Signature\n");
+
 			size_t sig_size = sizeof(block[i].signature) /sizeof(block[i].signature[0]);
 			for (size_t j = 0; j < sig_size; j++) {
 				std::printf("%lu", block[i].signature[j]);
 			}
 
+			std::printf("\n PublicKey \n");
+
 			size_t pks_size = sizeof(pks[i]) /sizeof(pks[i][0]);
 			for (size_t j = 0; j < sig_size; j++) {
 				std::printf("%lu", pks[i][j]);
 			}
+
+			std::printf("\n\n\n");
 			// -----------------------------------
 
 			if (!sig_check(block[i].transaction, block[i].signature, *pks[i])) {
@@ -114,17 +120,23 @@ public:
 			std::cout << "ORIGINAL CHECK" << std::endl;
 			std::printf("%lu\n", block[i].transaction.metadata.sourceAccount);
 
+			std::printf("Signature\n");
+
 			size_t sig_size = sizeof(block[i].signature) /sizeof(block[i].signature[0]);
 			for (size_t j = 0; j < sig_size; j++) {
 				std::printf("%lu", block[i].signature[j]);
 			}
 
-			size_t pks_size = sizeof(pks[i]) /sizeof(pks[i][0]);
-			for (size_t j = 0; j < sig_size; j++) {
-				std::printf("%lu", pks[i][j]);
+			auto pubkey = *pk_opt;
+
+			std::printf("\n PublicKey \n");
+
+			size_t pks_size = sizeof(pubkey)/sizeof(pubkey[0]);
+			for (size_t j = 0; j < pks_size; j++) {
+				std::printf("%lu", pubkey[j]);
 			}
 
-			std::printf("%lu\n", *pk_opt);
+			std::printf("\n\n\n");
 			// -----------------------------------
 
 			if (!sig_check(block[i].transaction, block[i].signature, *pk_opt)) {

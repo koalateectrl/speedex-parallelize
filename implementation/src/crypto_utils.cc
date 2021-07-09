@@ -31,28 +31,7 @@ public:
 		for (size_t i = r.begin(); i < r.end(); i++) {
 			auto sender_acct = block[i].transaction.metadata.sourceAccount;
 
-			// -------DELETE THIS CODE------------
-			std::cout << "SAM CHECK" << std::endl;
-			std::printf("%lu\n", block[i].transaction.metadata.sourceAccount);
-
-			std::printf("Signature\n");
-
-			size_t sig_size = sizeof(block[i].signature) /sizeof(block[i].signature[0]);
-			for (size_t j = 0; j < sig_size; j++) {
-				std::printf("%lu", block[i].signature[j]);
-			}
-
-			std::printf("\n PublicKey \n");
-
-			size_t pks_size = sizeof(pks[i]) /sizeof(pks[i][0]);
-			for (size_t j = 0; j < sig_size; j++) {
-				std::printf("%lu", pks[i][j]);
-			}
-
-			std::printf("\n\n\n");
-			// -----------------------------------
-
-			if (!sig_check(block[i].transaction, block[i].signature, *pks[i])) {
+			if (!sig_check(block[i].transaction, block[i].signature, pks[i])) {
 				std::printf("tx %lu failed, %lu\n", i, sender_acct);
 				temp_valid = false;
 				break;
@@ -88,7 +67,7 @@ SamBlockSignatureChecker::check_all_sigs(const SerializedBlock& block, const Ser
 
 	auto checker = SamSigCheckReduce(txs, pk_list);
 
-	tbb::parallel_reduce(tbb::blocked_range<size_t>(0, 5, 2000), checker); // change 5 to txs.size()
+	tbb::parallel_reduce(tbb::blocked_range<size_t>(0, 1, 2000), checker); // change 5 to txs.size()
 
 	return checker.valid;
 }
@@ -110,34 +89,10 @@ public:
 			auto sender_acct = block[i].transaction.metadata.sourceAccount;
 			auto pk_opt =  management_structures.db.get_pk_nolock(sender_acct);
 			if (!pk_opt) {
-
 				std::printf("no pk! account %lu\n", sender_acct);
 				temp_valid = false;
 				break;
 			}
-
-			// -------DELETE THIS CODE------------
-			std::cout << "ORIGINAL CHECK" << std::endl;
-			std::printf("%lu\n", block[i].transaction.metadata.sourceAccount);
-
-			std::printf("Signature\n");
-
-			size_t sig_size = sizeof(block[i].signature) /sizeof(block[i].signature[0]);
-			for (size_t j = 0; j < sig_size; j++) {
-				std::printf("%lu", block[i].signature[j]);
-			}
-
-			auto pubkey = *pk_opt;
-
-			std::printf("\n PublicKey \n");
-
-			size_t pks_size = sizeof(pubkey)/sizeof(pubkey[0]);
-			for (size_t j = 0; j < pks_size; j++) {
-				std::printf("%lu", pubkey[j]);
-			}
-
-			std::printf("\n\n\n");
-			// -----------------------------------
 
 			if (!sig_check(block[i].transaction, block[i].signature, *pk_opt)) {
 				std::printf("tx %lu failed, %lu\n", i, sender_acct);
@@ -171,7 +126,7 @@ BlockSignatureChecker::check_all_sigs(const SerializedBlock& block) {
 
 	auto checker = SigCheckReduce(management_structures, txs);
 
-	tbb::parallel_reduce(tbb::blocked_range<size_t>(0, 5, 2000), checker); // change from 5 to txs.size()
+	tbb::parallel_reduce(tbb::blocked_range<size_t>(0, 1, 2000), checker); // change from 5 to txs.size()
 
 	return checker.valid;
 }

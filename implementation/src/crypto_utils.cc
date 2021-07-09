@@ -29,16 +29,25 @@ public:
 		bool temp_valid = true;
 
 		for (size_t i = r.begin(); i < r.end(); i++) {
+			auto sender_acct = block[i].transaction.metadata.sourceAccount;
 
 			// -------DELETE THIS CODE------------
 			std::cout << "SAM CHECK" << std::endl;
-			std::printf("%lu\n", block[i].transaction);
-			std::printf("%lu\n", block[i].signature);
-			std::printf("%lu\n", pks[i]);
+			std::printf("%lu\n", block[i].transaction.metadata.sourceAccount);
+
+			size_t sig_size = sizeof(block[i].signature) /sizeof(block[i].signature[0]);
+			for (size_t j = 0; j < sig_size; j++) {
+				std::printf("%lu", block[i].signature[j]);
+			}
+
+			size_t pks_size = sizeof(pks[i]) /sizeof(pks[i][0]);
+			for (size_t j = 0; j < sig_size; j++) {
+				std::printf("%lu", pks[i][j]);
+			}
 			// -----------------------------------
 
-			if (!sig_check(block[i].transaction, block[i].signature, pks[i])) {
-				std::printf("tx %lu failed, %lu\n", i, pks[i]);
+			if (!sig_check(block[i].transaction, block[i].signature, *pks[i])) {
+				std::printf("tx %lu failed, %lu\n", i, sender_acct);
 				temp_valid = false;
 				break;
 			}
@@ -103,8 +112,18 @@ public:
 
 			// -------DELETE THIS CODE------------
 			std::cout << "ORIGINAL CHECK" << std::endl;
-			std::printf("%lu\n", block[i].transaction);
-			std::printf("%lu\n", block[i].signature);
+			std::printf("%lu\n", block[i].transaction.metadata.sourceAccount);
+
+			size_t sig_size = sizeof(block[i].signature) /sizeof(block[i].signature[0]);
+			for (size_t j = 0; j < sig_size; j++) {
+				std::printf("%lu", block[i].signature[j]);
+			}
+
+			size_t pks_size = sizeof(pks[i]) /sizeof(pks[i][0]);
+			for (size_t j = 0; j < sig_size; j++) {
+				std::printf("%lu", pks[i][j]);
+			}
+
 			std::printf("%lu\n", *pk_opt);
 			// -----------------------------------
 

@@ -127,7 +127,7 @@ struct SignedTransaction {
 struct SignedTransactionWithPK {
 	SignedTransaction signedTransaction;
 	PublicKey pk;
-}
+};
 
 
 // Store any nondeterministic operation results

@@ -25,13 +25,14 @@ std::string hostname_from_idx(int idx) {
 
 uint32_t
 poll_node(int idx, const std::string& experiment_name, 
-    const SerializedBlock& block, const SerializedPKs& pks, const uint64& num_threads) {
+    const SerializedBlock& block, const SerializedPKs& pks, 
+    const SerializedBlockWithPK& block_with_pk, const uint64& num_threads) {
     
     auto fd = xdr::tcp_connect(hostname_from_idx(idx).c_str(), SIGNATURE_CHECK_PORT);
     auto client = xdr::srpc_client<SignatureCheckV1>(fd.get());
 
     // if works return 0 else if failed return 1
-    uint32_t return_value = *client.check_all_signatures(experiment_name, block, pks, num_threads);
+    uint32_t return_value = *client.check_all_signatures(experiment_name, block, pks, block_with_pk, num_threads);
     std::cout << return_value << std::endl;
     return return_value;
 }
@@ -114,23 +115,23 @@ int main(int argc, char const *argv[]) {
 
     SerializedBlock serialized_block = xdr::xdr_to_opaque(tx_list);
 
+
     
-    
-    std::vector<PublicKey> tx_with_pks;
+    std::vector<SignedTransactionWithPK> tx_with_pks;
     tx_with_pks.resize(tx_list.size());
 
     tbb::parallel_for(
         tbb::blocked_range<size_t>(0, tx_list.size()),
-        [&tx_list, &management_structures](auto r) {
+        [&tx_list, &management_structures, &tx_with_pks](auto r) {
             for (size_t i = r.begin(); i < r.end(); i++) {
                 SignedTransactionWithPK signed_tx_with_pk;
                 signed_tx_with_pk.signedTransaction = tx_list[i];
-                signed_tx_with_pk.pk = management_structures.db.get_pk_nolock(tx_list[i].transaction.metadata.sourceAccount);
+                signed_tx_with_pk.pk = *management_structures.db.get_pk_nolock(tx_list[i].transaction.metadata.sourceAccount);
                 tx_with_pks[i] = signed_tx_with_pk;
             }
         });
 
-    SignedTransactionListWithPK tx_with_pk_list;
+    SignedTransactionWithPKList tx_with_pk_list;
 
     tx_with_pk_list.insert(tx_with_pk_list.end(), tx_with_pks.begin(), tx_with_pks.end());
 
@@ -143,7 +144,7 @@ int main(int argc, char const *argv[]) {
 
     auto timestamp = init_time_measurement();
 
-    if (poll_node(2, std::string(argv[1]), serialized_block, serialized_pks, num_threads) == 1) {
+    if (poll_node(2, std::string(argv[1]), serialized_block, serialized_pks, serialized_block_with_pk, num_threads) == 1) {
         throw std::runtime_error("sig checking failed!!!");
     }
 

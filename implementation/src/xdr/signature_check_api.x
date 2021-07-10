@@ -31,7 +31,7 @@ typedef string experimentname<>;
 
 program SignatureCheck {
     version SignatureCheckV1 {
-        uint32 check_all_signatures(experimentname, SerializedBlock, SerializedPKs, uint64) = 1;
+        uint32 check_all_signatures(experimentname, SerializedBlock, SerializedPKs, SerializedBlockWithPK, uint64) = 1;
     } = 1;
 } = 0x11111116;
 

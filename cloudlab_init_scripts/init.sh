@@ -1,3 +1,9 @@
 #!/bin/bash
 
-echo "Hello World"
+cd ../implemenation
+
+sudo ./autogen.sh
+
+sudo ./configure
+
+sudo make 

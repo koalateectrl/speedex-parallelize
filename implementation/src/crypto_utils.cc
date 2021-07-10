@@ -18,8 +18,7 @@ bool sig_check(const xdr_type& data, const Signature& sig, const PublicKey& pk) 
 }
 
 class SamSigCheckReduce {
-	const SignedTransactionList& block;
-	const PublicKeyList& pks;
+	const SignedTransactionWithPKList& block_with_pk;
 public:
 
 	bool valid = true;
@@ -29,9 +28,11 @@ public:
 		bool temp_valid = true;
 
 		for (size_t i = r.begin(); i < r.end(); i++) {
-			auto sender_acct = block[i].transaction.metadata.sourceAccount;
+			auto sender_acct = block_with_pk[i].signedTransaction.transaction.metadata.sourceAccount;
 
-			if (!sig_check(block[i].transaction, block[i].signature, pks[i])) {
+			if (!sig_check(block_with_pk[i].signedTransaction.transaction, 
+				block_with_pk[i].signedTransaction.signature, 
+				block_with_pk[i].pk)) {
 				std::printf("tx %lu failed, %lu\n", i, sender_acct);
 				temp_valid = false;
 				break;
@@ -42,14 +43,11 @@ public:
 	}
 
 	SamSigCheckReduce(
-		const SignedTransactionList& block,
-		const PublicKeyList& pks)
-	: block(block)
-	, pks(pks) {}
+		const SignedTransactionWithPKList& block_with_pk) 
+	: block_with_pk(block_with_pk) {}
 
-	SamSigCheckReduce(SamSigCheckReduce& other, tbb::split)
-	: block(other.block)
-	, pks(other.pks) {}
+	SamSigCheckReduce(SamSigCheckReduce& other, tbb::split) 
+	: block_with_pk(other.block_with_pk) {}
 
 	void join(SamSigCheckReduce& other) {
 		valid = valid && other.valid;
@@ -58,14 +56,13 @@ public:
 };
 
 bool
-SamBlockSignatureChecker::check_all_sigs(const SerializedBlock& block, const SerializedPKs& pks) {
-	SignedTransactionList txs;
-	xdr::xdr_from_opaque(block, txs);
+SamBlockSignatureChecker::check_all_sigs(const SerializedBlockwithPK& block_with_pk) {
 
-	PublicKeyList pk_list;
-	xdr::xdr_from_opaque(pks, pk_list);
+	SignedTransactionWithPKList tx_with_pk_list;
+	
+	xdr::xdr_from_opaque(block_with_pk, tx_with_pk_list);
 
-	auto checker = SamSigCheckReduce(txs, pk_list);
+	auto checker = SamSigCheckReduce(tx_with_pk_list);
 
 	tbb::parallel_reduce(tbb::blocked_range<size_t>(0, 1, 2000), checker); // change 5 to txs.size()
 

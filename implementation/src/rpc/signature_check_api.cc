@@ -75,14 +75,13 @@ SignatureCheckV1_server::check_all_signatures(const std::string& experiment_name
 
 
 
-  /*
   SamBlockSignatureChecker sam_checker;
 
   if (!sam_checker.check_all_sigs(block, pks)) {
     std::cout << "FAILED" << std::endl;
   } else {
     std::cout << "SUCCESS" << std::endl;
-  }*/
+  }
 
 
 

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd ../implemenation
+cd ../implementation
 
 sudo ./autogen.sh
 

@@ -40,7 +40,7 @@ int main(int argc, char const *argv[])
             .smooth_mult = 10
         });
 
-    std::printf("num accounts: %lu\n", params.num_accounts);
+    std::printf("num accounts: %u\n", params.num_accounts);
 
     AccountIDList account_id_list;
 
@@ -60,7 +60,7 @@ int main(int argc, char const *argv[])
             }
         });
 
-    for (size_t i = 0; i < params.num_accounts; i++) {
+    for (int32_t i = 0; i < params.num_accounts; i++) {
 
         //std::printf("%lu %s\n", account_id_list[i], DebugUtils::__array_to_str(pks.at(i).data(), pks[i].size()).c_str());
         management_structures.db.add_account_to_db(account_id_list[i], pks[i]);
@@ -95,8 +95,6 @@ int main(int argc, char const *argv[])
     }
 
     float res = measure_time(timestamp);
-
-    std::printf("")
 
     std::printf("checked %lu sigs in %lf with max %lu threads\n", tx_list.size(), res, num_threads);
     return 0;

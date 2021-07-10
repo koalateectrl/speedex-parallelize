@@ -5,8 +5,6 @@
 #include <thread>
 #include <chrono>
 
-#include "utils.h"
-
 #include <cstdint>
 #include <vector>
 
@@ -25,7 +23,7 @@ std::string hostname_from_idx(int idx) {
 
 uint32_t
 poll_node(int idx, const std::string& experiment_name, 
-    const SerializedBlock& block, const SerializedBlockWithPK& block_with_pk, const uint64& num_threads) {
+    const SerializedBlockWithPK& block_with_pk, const uint64& num_threads) {
     
     auto fd = xdr::tcp_connect(hostname_from_idx(idx).c_str(), SIGNATURE_CHECK_PORT);
     auto client = xdr::srpc_client<SignatureCheckV1>(fd.get());
@@ -143,7 +141,7 @@ int main(int argc, char const *argv[]) {
 
     auto timestamp = init_time_measurement();
 
-    if (poll_node(2, std::string(argv[1]), serialized_block, serialized_block_with_pk, num_threads) == 1) {
+    if (poll_node(2, std::string(argv[1]), serialized_block_with_pk, num_threads) == 1) {
         throw std::runtime_error("sig checking failed!!!");
     }
 

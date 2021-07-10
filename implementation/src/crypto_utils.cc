@@ -8,6 +8,20 @@
 
 #include <cstddef>
 
+
+
+#include "xdr/experiments.h"
+#include "xdr/signature_check_api.h"
+#include "rpc/rpcconfig.h"
+#include <xdrpp/srpc.h>
+#include <thread>
+#include <chrono>
+#include <cstdint>
+#include <vector>
+#include "xdr/experiments.h"
+#include "edce_management_structures.h"
+#include "tbb/global_control.h"
+
 namespace edce {
 
 template<typename xdr_type>
@@ -29,6 +43,10 @@ public:
 
 		for (size_t i = r.begin(); i < r.end(); i++) {
 			auto sender_acct = block_with_pk[i].signedTransaction.transaction.metadata.sourceAccount;
+
+			std::cout << block_with_pk[i].signedTransaction.transaction.metadata.sourceAccount << std::endl;
+			std::cout << block_with_pk[i].signedTransaction.signature << std::endl;
+			std::cout << block_with_pk[i].pk << std::endl;
 
 			if (!sig_check(block_with_pk[i].signedTransaction.transaction, 
 				block_with_pk[i].signedTransaction.signature, 

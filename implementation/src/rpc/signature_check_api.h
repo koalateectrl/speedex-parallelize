@@ -16,7 +16,7 @@ public:
   SignatureCheckV1_server() {};
 
   std::unique_ptr<unsigned int> check_all_signatures(const std::string& experiment_name, 
-    const SerializedBlock& block, const SerializedBlockWithPK& block_with_pk, const uint64& num_threads);
+    const SerializedBlockWithPK& block_with_pk, const uint64& num_threads);
 
 };
 

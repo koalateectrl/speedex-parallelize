@@ -23,6 +23,8 @@ SignatureCheckV1_server::check_all_signatures(const std::string& experiment_name
   const SerializedBlockWithPK& block_with_pk, const uint64& num_threads)
 {
 
+  auto timestamp = init_time_measurement();
+
   SamBlockSignatureChecker sam_checker;
 
   tbb::global_control control(
@@ -31,6 +33,9 @@ SignatureCheckV1_server::check_all_signatures(const std::string& experiment_name
   if (!sam_checker.check_all_sigs(block_with_pk)) {
     return std::make_unique<unsigned int>(1);
   } 
+
+  float res = measure_time(timestamp);
+  std::cout << "Total time for check_all_signatures RPC call: " << res << std::endl;
 
   return std::make_unique<unsigned int>(0);
 

@@ -3,24 +3,9 @@
 #include <xdrpp/marshal.h>
 #include <tbb/parallel_reduce.h>
 
-
 #include "utils.h"
 
 #include <cstddef>
-
-
-
-#include "xdr/experiments.h"
-#include "xdr/signature_check_api.h"
-#include "rpc/rpcconfig.h"
-#include <xdrpp/srpc.h>
-#include <thread>
-#include <chrono>
-#include <cstdint>
-#include <vector>
-#include "xdr/experiments.h"
-#include "edce_management_structures.h"
-#include "tbb/global_control.h"
 
 namespace edce {
 
@@ -72,13 +57,23 @@ public:
 bool
 SamBlockSignatureChecker::check_all_sigs(const SerializedBlockWithPK& block_with_pk) {
 
+	auto ts_1 = init_time_measurement();
+
 	SignedTransactionWithPKList tx_with_pk_list;
 	
 	xdr::xdr_from_opaque(block_with_pk, tx_with_pk_list);
 
+	float res_1 = measure_time(ts_1);
+	std::cout << "Time to unmarshall: " << res_1 << std::endl;
+
 	auto checker = SamSigCheckReduce(tx_with_pk_list);
 
+	auto ts_2 = init_time_measurement();
+
 	tbb::parallel_reduce(tbb::blocked_range<size_t>(0, tx_with_pk_list.size(), 2000), checker); // change 5 to txs.size()
+
+	float res_2 = measure_time(ts_2);
+	std::cout << "Time to check all signatures: " << res_2 << std::endl;
 
 	return checker.valid;
 }

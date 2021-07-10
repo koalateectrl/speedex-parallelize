@@ -42,6 +42,8 @@ int main(int argc, char const *argv[]) {
         return -1;
     }
 
+    auto timestamp = init_time_measurement();
+
     DeterministicKeyGenerator key_gen;
 
     ExperimentParameters params;
@@ -134,12 +136,8 @@ int main(int argc, char const *argv[]) {
 
     SerializedBlockWithPK serialized_block_with_pk = xdr::xdr_to_opaque(tx_with_pk_list);
 
-
-
     
     size_t num_threads = std::stoi(argv[3]);
-
-    auto timestamp = init_time_measurement();
 
     if (poll_node(2, std::string(argv[1]), serialized_block_with_pk, num_threads) == 1) {
         throw std::runtime_error("sig checking failed!!!");

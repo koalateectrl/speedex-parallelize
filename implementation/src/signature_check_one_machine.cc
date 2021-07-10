@@ -13,7 +13,6 @@ using namespace edce;
 
 int main(int argc, char const *argv[])
 {
-
     if (argc != 4) {
         std::printf("usage: ./signature_check_one_machine experiment_name block_number num_threads\n");
         return -1;

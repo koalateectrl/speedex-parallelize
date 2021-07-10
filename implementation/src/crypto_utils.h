@@ -18,7 +18,7 @@ public:
 		}
 	}
 
-	bool check_all_sigs(const SerializedBlockwithPK& block_with_pk);
+	bool check_all_sigs(const SerializedBlockWithPK& block_with_pk);
 };
 
 class BlockSignatureChecker {

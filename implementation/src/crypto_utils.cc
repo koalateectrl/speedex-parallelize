@@ -56,7 +56,7 @@ public:
 };
 
 bool
-SamBlockSignatureChecker::check_all_sigs(const SerializedBlockwithPK& block_with_pk) {
+SamBlockSignatureChecker::check_all_sigs(const SerializedBlockWithPK& block_with_pk) {
 
 	SignedTransactionWithPKList tx_with_pk_list;
 	

@@ -44,10 +44,6 @@ public:
 		for (size_t i = r.begin(); i < r.end(); i++) {
 			auto sender_acct = block_with_pk[i].signedTransaction.transaction.metadata.sourceAccount;
 
-			std::cout << block_with_pk[i].signedTransaction.transaction.metadata.sourceAccount << std::endl;
-			std::cout << block_with_pk[i].signedTransaction.signature << std::endl;
-			std::cout << block_with_pk[i].pk << std::endl;
-
 			if (!sig_check(block_with_pk[i].signedTransaction.transaction, 
 				block_with_pk[i].signedTransaction.signature, 
 				block_with_pk[i].pk)) {
@@ -82,7 +78,7 @@ SamBlockSignatureChecker::check_all_sigs(const SerializedBlockWithPK& block_with
 
 	auto checker = SamSigCheckReduce(tx_with_pk_list);
 
-	tbb::parallel_reduce(tbb::blocked_range<size_t>(0, 1, 2000), checker); // change 5 to txs.size()
+	tbb::parallel_reduce(tbb::blocked_range<size_t>(0, tx_with_pk_list.size(), 2000), checker); // change 5 to txs.size()
 
 	return checker.valid;
 }
@@ -141,7 +137,7 @@ BlockSignatureChecker::check_all_sigs(const SerializedBlock& block) {
 
 	auto checker = SigCheckReduce(management_structures, txs);
 
-	tbb::parallel_reduce(tbb::blocked_range<size_t>(0, 1, 2000), checker); // change from 5 to txs.size()
+	tbb::parallel_reduce(tbb::blocked_range<size_t>(0, txs.size(), 2000), checker); // change from 5 to txs.size()
 
 	return checker.valid;
 }

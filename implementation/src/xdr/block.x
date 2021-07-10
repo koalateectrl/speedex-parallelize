@@ -31,11 +31,16 @@ struct TransactionData {
 
 typedef SignedTransaction SignedTransactionList<MAX_TRANSACTIONS_PER_BLOCK>;
 
+typedef SignedTransactionWithPK SignedTransactionWithPKList<MAX_TRANSACTIONS_PER_BLOCK>;
+
 // payload is SignedTransactionList
 typedef opaque SerializedBlock<>;
 
 // payload is PublicKeyList
 typedef opaque SerializedPKs<>;
+
+// payload is SignedTransactionWithPKList
+typedef opaque SerializedBlockWithPK<>;
 
 //struct PartialMiniblock {
 //	union switch(bool exists) {

@@ -56,7 +56,6 @@ public:
 
 bool
 SamBlockSignatureChecker::check_all_sigs(const SerializedBlockWithPK& block_with_pk) {
-
 	auto ts_1 = init_time_measurement();
 
 	SignedTransactionWithPKList tx_with_pk_list;
@@ -127,12 +126,22 @@ public:
 
 bool 
 BlockSignatureChecker::check_all_sigs(const SerializedBlock& block) {
+	auto ts_1 = init_time_measurement();
+
 	SignedTransactionList txs;
 	xdr::xdr_from_opaque(block, txs);
 
+	float res_1 = measure_time(ts_1);
+	std::cout << "Time to unmarshall: " << res_1 << std::endl;
+
 	auto checker = SigCheckReduce(management_structures, txs);
 
+	auto ts_2 = init_time_measurement();
+
 	tbb::parallel_reduce(tbb::blocked_range<size_t>(0, txs.size(), 2000), checker); // change from 5 to txs.size()
+
+	float res_2 = measure_time(ts_2);
+	std::cout << "Time to check all signatures: " << res_2 << std::endl;
 
 	return checker.valid;
 }

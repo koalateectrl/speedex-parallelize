@@ -1,44 +1,21 @@
-#include "xdr/experiments.h"
-#include "xdr/signature_check_api.h"
-#include "rpc/rpcconfig.h"
-#include <xdrpp/srpc.h>
-#include <thread>
-#include <chrono>
-
-#include <cstdint>
-#include <vector>
-
 #include "crypto_utils.h"
+
 #include "utils.h"
+#include <cstdint>
+#include <cstddef>
+
 #include "xdr/experiments.h"
+
 #include "edce_management_structures.h"
 #include "tbb/global_control.h"
 
-
 using namespace edce;
 
-std::string hostname_from_idx(int idx) {
-    return std::string("10.10.1.") + std::to_string(idx);
-}
-
-uint32_t
-poll_node(int idx, const std::string& experiment_name, 
-    const SerializedBlockWithPK& block_with_pk, const uint64& num_threads) {
-    
-    auto fd = xdr::tcp_connect(hostname_from_idx(idx).c_str(), SIGNATURE_CHECK_PORT);
-    auto client = xdr::srpc_client<SignatureCheckV1>(fd.get());
-
-    // if works return 0 else if failed return 1
-    uint32_t return_value = *client.check_all_signatures(experiment_name, block_with_pk, num_threads);
-    std::cout << return_value << std::endl;
-    return return_value;
-}
-
-
-int main(int argc, char const *argv[]) {
+int main(int argc, char const *argv[])
+{
 
     if (argc != 4) {
-        std::printf("usage: ./signature_check_controller experiment_name block_number num_threads\n");
+        std::printf("usage: ./signature_check_one_machine experiment_name block_number num_threads\n");
         return -1;
     }
 
@@ -63,7 +40,7 @@ int main(int argc, char const *argv[]) {
             .smooth_mult = 10
         });
 
-    std::printf("num accounts: %u\n", params.num_accounts);
+    std::printf("num accounts: %lu\n", params.num_accounts);
 
     AccountIDList account_id_list;
 
@@ -83,7 +60,7 @@ int main(int argc, char const *argv[]) {
             }
         });
 
-    for (int32_t i = 0; i < params.num_accounts; i++) {
+    for (size_t i = 0; i < params.num_accounts; i++) {
 
         //std::printf("%lu %s\n", account_id_list[i], DebugUtils::__array_to_str(pks.at(i).data(), pks[i].size()).c_str());
         management_structures.db.add_account_to_db(account_id_list[i], pks[i]);
@@ -91,11 +68,7 @@ int main(int argc, char const *argv[]) {
 
     management_structures.db.commit(0);
 
-    PublicKeyList pk_list;
-
-    pk_list.insert(pk_list.end(), pks.begin(), pks.end());
-
-    SerializedPKs serialized_pks = xdr::xdr_to_opaque(pk_list);
+    BlockSignatureChecker checker(management_structures);
 
     ExperimentBlock block;
 
@@ -112,57 +85,19 @@ int main(int argc, char const *argv[]) {
 
     SerializedBlock serialized_block = xdr::xdr_to_opaque(tx_list);
     
-    std::vector<SignedTransactionWithPK> tx_with_pks;
-    tx_with_pks.resize(tx_list.size());
-
-    tbb::parallel_for(
-        tbb::blocked_range<size_t>(0, tx_list.size()),
-        [&tx_list, &management_structures, &tx_with_pks](auto r) {
-            for (size_t i = r.begin(); i < r.end(); i++) {
-                SignedTransactionWithPK signed_tx_with_pk;
-                signed_tx_with_pk.signedTransaction = tx_list[i];
-                signed_tx_with_pk.pk = *management_structures.db.get_pk_nolock(tx_list[i].transaction.metadata.sourceAccount);
-                tx_with_pks[i] = signed_tx_with_pk;
-            }
-        });
-
-    SignedTransactionWithPKList tx_with_pk_list;
-
-    tx_with_pk_list.insert(tx_with_pk_list.end(), tx_with_pks.begin(), tx_with_pks.end());
-
-    SerializedBlockWithPK serialized_block_with_pk = xdr::xdr_to_opaque(tx_with_pk_list);
-
-    
     size_t num_threads = std::stoi(argv[3]);
 
-    if (poll_node(2, std::string(argv[1]), serialized_block_with_pk, num_threads) == 1) {
+    tbb::global_control control(
+        tbb::global_control::max_allowed_parallelism, num_threads);
+
+    if (!checker.check_all_sigs(serialized_block)) {
         throw std::runtime_error("sig checking failed!!!");
     }
 
     float res = measure_time(timestamp);
 
+    std::printf("")
+
     std::printf("checked %lu sigs in %lf with max %lu threads\n", tx_list.size(), res, num_threads);
-
     return 0;
-
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

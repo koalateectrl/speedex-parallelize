@@ -78,7 +78,8 @@ MAIN_CCS = synthetic_data_generator/aberrant_datasets_gen.cc \
 	synthetic_data_generator/synthetic_data_gen_from_params.cc \
 	tatonnement_sim.cc trie_comparison.cc save_acclog_fast.cc \
 	hello_world_controller.cc hello_world_server_main.cc \
-	signature_check_controller.cc signature_check_server_main.cc
+	signature_check_controller.cc signature_check_server_main.cc \
+	signature_check_one_machine.cc
 
 
 $(MAIN_CCS:.cc=.o) : $(SRC_X_FILES:.x=.h)
@@ -139,7 +140,8 @@ bin_PROGRAMS = database_speed_test test \
 	hello_world_controller \
 	hello_world_server_main \
 	signature_check_controller \
-	signature_check_server_main
+	signature_check_server_main \
+	signature_check_one_machine
 
 all-local: xdrpy_module
 
@@ -191,6 +193,8 @@ hello_world_server_main_SOURCES = $(SRCS) hello_world_server_main.cc
 signature_check_controller_SOURCES = $(SRCS) signature_check_controller.cc
 
 signature_check_server_main_SOURCES = $(SRCS) signature_check_server_main.cc
+
+signature_check_one_machine_SOURCES = $(SRCS) signature_check_one_machine.cc
 
 CLEANFILES = $(SRC_X_FILES:.x=.h) $(SERVER_X_FILES:.x=.scaffold_h) $(SERVER_X_FILES:.x=.scaffold_cc) \
 	 $(SERVER_X_FILES:.x=.scaffold_h_async) $(SERVER_X_FILES:.x=.scaffold_cc_async)

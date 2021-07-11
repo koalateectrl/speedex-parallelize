@@ -132,23 +132,18 @@ int main(int argc, char const *argv[]) {
 
     SerializedBlockWithPK serialized_block_with_pk = xdr::xdr_to_opaque(tx_with_pk_list);
 
-    
+    size_t num_child_machines = std::stoi(argv[3]);
     size_t num_threads = std::stoi(argv[4]);
 
     tbb::parallel_for(
-        tbb::blocked_range<size_t>(0, std::stoi(argv[3])),
-        [&serialized_block_with_pk, &num_threads](auto r) {
-            for (size_t i = 1; i <= num_threads; i++) {
-                if (poll_node(i + 1, serialized_block_with_pk, num_threads) == 1) {
+        tbb::blocked_range<size_t>(0, num_child_machines),
+        [&serialized_block_with_pk, &num_child_machines, &num_threads](auto r) {
+            for (size_t i = r.begin(); i != r.end(); i++) {
+                if (poll_node(i + 2, serialized_block_with_pk, num_threads) == 1) {
                     throw std::runtime_error("sig checking failed!!!");
                 }
             }
         });
-
-    /*
-    if (poll_node(2, std::string(serialized_block_with_pk, num_threads) == 1) {
-        throw std::runtime_error("sig checking failed!!!");
-    }*/
 
     float res = measure_time(timestamp);
 

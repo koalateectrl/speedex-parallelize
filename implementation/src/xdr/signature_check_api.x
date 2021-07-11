@@ -27,11 +27,9 @@
 
 namespace edce {
 
-typedef string experimentname<>;
-
 program SignatureCheck {
     version SignatureCheckV1 {
-        uint32 check_all_signatures(experimentname, SerializedBlockWithPK, uint64) = 1;
+        uint32 check_all_signatures(SerializedBlockWithPK, uint64) = 1;
     } = 1;
 } = 0x11111116;
 

@@ -19,8 +19,8 @@ namespace edce {
 //rpc
 
 std::unique_ptr<unsigned int>
-SignatureCheckV1_server::check_all_signatures(const std::string& experiment_name, 
-  const SerializedBlockWithPK& block_with_pk, const uint64& num_threads)
+SignatureCheckV1_server::check_all_signatures(const SerializedBlockWithPK& block_with_pk, 
+  const uint64& num_threads)
 {
 
   auto timestamp = init_time_measurement();

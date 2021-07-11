@@ -22,8 +22,8 @@ std::string hostname_from_idx(int idx) {
 }
 
 uint32_t
-poll_node(int idx, const std::string& experiment_name, 
-    const SerializedBlockWithPK& block_with_pk, const uint64& num_threads) {
+poll_node(int idx, const SerializedBlockWithPK& block_with_pk, 
+    const uint64& num_threads) {
     
     auto fd = xdr::tcp_connect(hostname_from_idx(idx).c_str(), SIGNATURE_CHECK_PORT);
     auto client = xdr::srpc_client<SignatureCheckV1>(fd.get());
@@ -37,8 +37,8 @@ poll_node(int idx, const std::string& experiment_name,
 
 int main(int argc, char const *argv[]) {
 
-    if (argc != 4) {
-        std::printf("usage: ./signature_check_controller experiment_name block_number num_threads\n");
+    if (argc != 5) {
+        std::printf("usage: ./signature_check_controller experiment_name block_number num_child_machines num_threads\n");
         return -1;
     }
 
@@ -133,11 +133,22 @@ int main(int argc, char const *argv[]) {
     SerializedBlockWithPK serialized_block_with_pk = xdr::xdr_to_opaque(tx_with_pk_list);
 
     
-    size_t num_threads = std::stoi(argv[3]);
+    size_t num_threads = std::stoi(argv[4]);
 
-    if (poll_node(2, std::string(argv[1]), serialized_block_with_pk, num_threads) == 1) {
+    tbb::parallel_for(
+        tbb::blocked_range<size_t>(0, std::stoi(argv[3])),
+        [&serialized_block_with_pk, &num_threads](auto r) {
+            for (size_t i = 1; i <= num_threads; i++) {
+                if (poll_node(i + 1, std::string(serialized_block_with_pk, num_threads) == 1)) {
+                    throw std::runtime_error("sig checking failed!!!");
+                }
+            }
+        });
+
+    /*
+    if (poll_node(2, std::string(serialized_block_with_pk, num_threads) == 1) {
         throw std::runtime_error("sig checking failed!!!");
-    }
+    }*/
 
     float res = measure_time(timestamp);
 

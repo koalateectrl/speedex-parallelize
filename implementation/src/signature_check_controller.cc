@@ -139,7 +139,7 @@ int main(int argc, char const *argv[]) {
         tbb::blocked_range<size_t>(0, std::stoi(argv[3])),
         [&serialized_block_with_pk, &num_threads](auto r) {
             for (size_t i = 1; i <= num_threads; i++) {
-                if (poll_node(i + 1, std::string(serialized_block_with_pk, num_threads) == 1)) {
+                if (poll_node(i + 1, serialized_block_with_pk, num_threads) == 1) {
                     throw std::runtime_error("sig checking failed!!!");
                 }
             }

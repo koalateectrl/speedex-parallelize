@@ -33,7 +33,20 @@ poll_node(int idx, const SerializedBlockWithPK& block_with_pk,
     std::cout << return_value << std::endl;
     return return_value;
 }
+/*
+template<typename T>
+void split_vector(const std::vector<T>& vec, const size_t num_subs, std::vector<std::vector<T>>& outVec) {
+    size_t length = vec.size() / num_subs;
+    size_t remain = vec.size() % num_subs;
+    size_t begin = 0;
+    size_t end = 0;
 
+    for (size_t i = 0; i < std::min(num_subs, vec.size()); i++) {
+        end += (remain > 0) ? (length + !!(remain--)) : length;
+        outVec.push_back(std::vector<T>(vec.begin() + begin, vec.begin() + end));
+        begin = end;
+    }
+}*/
 
 int main(int argc, char const *argv[]) {
 
@@ -133,26 +146,18 @@ int main(int argc, char const *argv[]) {
     size_t num_child_machines = std::stoi(argv[3]);
     size_t num_threads = std::stoi(argv[4]);
 
-    // NEW CODE
-    size_t max_trans_subs_size = (tx_with_pk_list.size() - 1) / num_child_machines + 1;
-    std::vector<SignedTransactionWithPKList> tx_with_pk_subs_list[num_child_machines];
+    std::vector<SignedTransactionWithPKList> tx_with_pk_subs_list;
 
-    for (size_t i = 0; i < num_child_machines; i++) {
-        auto start_it = std::next(tx_with_pk_list.begin(), i * max_trans_subs_size);
-        auto end_it = std::next(tx_with_pk_list.begin(), i * max_trans_subs_size + max_trans_subs_size);
+    size_t length = vec.size() / num_subs;
+    size_t remain = vec.size() % num_subs;
+    size_t begin = 0;
+    size_t end = 0;
 
-        tx_with_pk_subs_list[i].resize(max_trans_subs_size);
-
-        if (i * max_trans_subs_size + max_trans_subs_size > tx_with_pk_list.size()) {
-            end_it = tx_with_pk_list.end();
-            tx_with_pk_subs_list[i].resize(tx_with_pk_list.size() - i * max_trans_subs_size);
-        }
-
-        std::copy(start_it, end_it, tx_with_pk_subs_list[i].begin());
+    for (size_t i = 0; i < std::min(num_subs, tx_with_pk_list.size()); i++) {
+        end += (remain > 0) ? (length + !!(remain--)) : length;
+        tx_with_pk_subs_list.push_back(SignedTransactionWithPKList(tx_with_pk_list.begin() + begin, tx_with_pk_list.begin() + end));
+        begin = end;
     }
-    //
-
-
     //SerializedBlockWithPK serialized_block_with_pk = xdr::xdr_to_opaque(tx_with_pk_list);
 
     

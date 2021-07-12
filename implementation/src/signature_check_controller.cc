@@ -130,10 +130,32 @@ int main(int argc, char const *argv[]) {
 
     tx_with_pk_list.insert(tx_with_pk_list.end(), tx_with_pks.begin(), tx_with_pks.end());
 
-    SerializedBlockWithPK serialized_block_with_pk = xdr::xdr_to_opaque(tx_with_pk_list);
-
     size_t num_child_machines = std::stoi(argv[3]);
     size_t num_threads = std::stoi(argv[4]);
+
+    // NEW CODE
+    int max_trans_subs_size = (tx_with_pk_list.size() - 1) / num_child_machines + 1;
+    std::vector<SignedTransactionWithPK> tx_with_pk_subs_list[num_child_machines];
+
+    for (size_t i = 0; i < num_child_machines; i++) {
+        auto start_it = std::next(tx_with_pk_list.begin(), i * max_trans_subs_size);
+        auto end_it = std::next(tx_with_pk_list.begin(), i * max_trans_subs_size + max_trans_subs_size);
+
+        tx_with_pk_subs_list[i].resize(max_trans_subs_size);
+
+        if (i * max_trans_subs_size + max_trans_subs_size > tx_with_pk_list.size()) {
+            end_it = tx_with_pk_list.end();
+            tx_with_pk_subs_list[i].resize(tx_with_pk_list.size() - i * max_trans_subs_size);
+        }
+
+        std::copy(start_it, end_it, tx_with_pk_subs_list[i].begin());
+    }
+    //
+
+
+    SerializedBlockWithPK serialized_block_with_pk = xdr::xdr_to_opaque(tx_with_pk_list);
+
+    
 
     tbb::parallel_for(
         tbb::blocked_range<size_t>(0, num_child_machines),

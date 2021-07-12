@@ -134,14 +134,14 @@ int main(int argc, char const *argv[]) {
     size_t num_threads = std::stoi(argv[4]);
 
     // NEW CODE
-    int max_trans_subs_size = (tx_with_pk_list.size() - 1) / num_child_machines + 1;
+    size_t max_trans_subs_size = (tx_with_pk_list.size() - 1) / num_child_machines + 1;
     std::vector<SignedTransactionWithPKList> tx_with_pk_subs_list[num_child_machines];
 
-    for (int i = 0; i < num_child_machines; i++) {
+    for (size_t i = 0; i < num_child_machines; i++) {
         auto start_it = std::next(tx_with_pk_list.begin(), i * max_trans_subs_size);
         auto end_it = std::next(tx_with_pk_list.begin(), i * max_trans_subs_size + max_trans_subs_size);
 
-        tx_with_pk_subs_list[k].resize(max_trans_subs_size);
+        tx_with_pk_subs_list[i].resize(max_trans_subs_size);
 
         if (i * max_trans_subs_size + max_trans_subs_size > tx_with_pk_list.size()) {
             end_it = tx_with_pk_list.end();

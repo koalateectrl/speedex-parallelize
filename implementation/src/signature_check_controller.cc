@@ -33,20 +33,21 @@ poll_node(int idx, const SerializedBlockWithPK& block_with_pk,
     std::cout << return_value << std::endl;
     return return_value;
 }
-/*
-template<typename T>
-void split_vector(const std::vector<T>& vec, const size_t num_subs, std::vector<std::vector<T>>& outVec) {
-    size_t length = vec.size() / num_subs;
-    size_t remain = vec.size() % num_subs;
+
+void split_transaction_block(const SignedTransactionWithPKList& orig_vec, 
+    const size_t num_child_machines, std::vector<SignedTransactionWithPKList>& split_vec) {
+    
+    size_t length = orig_vec.size() / num_child_machines;
+    size_t remain = orig_vec.size() % num_child_machines;
     size_t begin = 0;
     size_t end = 0;
 
-    for (size_t i = 0; i < std::min(num_subs, vec.size()); i++) {
+    for (size_t i = 0; i < std::min(num_child_machines, orig_vec.size()); i++) {
         end += (remain > 0) ? (length + !!(remain--)) : length;
-        outVec.push_back(std::vector<T>(vec.begin() + begin, vec.begin() + end));
+        split_vec.push_back(SignedTransactionWithPKList(orig_vec.begin() + begin, orig_vec.begin() + end));
         begin = end;
     }
-}*/
+}
 
 int main(int argc, char const *argv[]) {
 
@@ -146,27 +147,15 @@ int main(int argc, char const *argv[]) {
     size_t num_child_machines = std::stoi(argv[3]);
     size_t num_threads = std::stoi(argv[4]);
 
-    std::vector<SignedTransactionWithPKList> tx_with_pk_subs_list;
+    std::vector<SignedTransactionWithPKList> tx_with_pk_split_list;
 
-    size_t length = vec.size() / num_subs;
-    size_t remain = vec.size() % num_subs;
-    size_t begin = 0;
-    size_t end = 0;
-
-    for (size_t i = 0; i < std::min(num_subs, tx_with_pk_list.size()); i++) {
-        end += (remain > 0) ? (length + !!(remain--)) : length;
-        tx_with_pk_subs_list.push_back(SignedTransactionWithPKList(tx_with_pk_list.begin() + begin, tx_with_pk_list.begin() + end));
-        begin = end;
-    }
-    //SerializedBlockWithPK serialized_block_with_pk = xdr::xdr_to_opaque(tx_with_pk_list);
-
-    
+    split_transaction_block(tx_with_pk_list, num_child_machines, tx_with_pk_split_list) {
 
     tbb::parallel_for(
         tbb::blocked_range<size_t>(0, num_child_machines),
-        [&tx_with_pk_subs_list, &num_child_machines, &num_threads](auto r) {
+        [&tx_with_pk_split_list, &num_child_machines, &num_threads](auto r) {
             for (size_t i = r.begin(); i != r.end(); i++) {
-                SerializedBlockWithPK serialized_block_with_pk = xdr::xdr_to_opaque(tx_with_pk_subs_list[i]);
+                SerializedBlockWithPK serialized_block_with_pk = xdr::xdr_to_opaque(tx_with_pk_split_list[i]);
                 if (poll_node(i + 2, serialized_block_with_pk, num_threads) == 1) {
                     throw std::runtime_error("sig checking failed!!!");
                 }

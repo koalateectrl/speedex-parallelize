@@ -149,7 +149,7 @@ int main(int argc, char const *argv[]) {
 
     std::vector<SignedTransactionWithPKList> tx_with_pk_split_list;
 
-    split_transaction_block(tx_with_pk_list, num_child_machines, tx_with_pk_split_list) {
+    split_transaction_block(tx_with_pk_list, num_child_machines, tx_with_pk_split_list);
 
     tbb::parallel_for(
         tbb::blocked_range<size_t>(0, num_child_machines),

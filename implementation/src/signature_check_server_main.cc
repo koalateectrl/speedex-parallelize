@@ -15,7 +15,7 @@ int main(int argc, char const *argv[]) {
         int is_shard = std::stoi(argv[1]);
         if (is_shard == 0) {
             SignatureCheckApiServer signature_check_server;
-        } elif (is_shard == 1) {
+        } else if (is_shard == 1) {
             SignatureShardApiServer signature_shard_server;
         } else {
             throw std::runtime_error("The is_shard argument must be 0 or 1!!!");

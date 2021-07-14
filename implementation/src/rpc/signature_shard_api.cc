@@ -17,7 +17,7 @@
 namespace edce {
 
 //rpc
-SignatureShardV1_server::print_hello_world() {
+void SignatureShardV1_server::print_hello_world() {
   std::cout << "HELLO WORLD" << std::endl;
 }
 

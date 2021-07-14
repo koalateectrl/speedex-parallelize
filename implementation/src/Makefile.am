@@ -12,7 +12,8 @@ DATA_X_FILES = xdr/types.x \
 	xdr/cryptocoin_experiment.x \
 	xdr/header_summary.x \
 	xdr/hello_world_api.x \
-	xdr/signature_check_api.x
+	xdr/signature_check_api.x \
+	xdr/signature_shard_api.x
 
 SERVER_X_FILES = xdr/transaction_submission_api.x xdr/server_control_api.x \
 	xdr/state_query_api.x 
@@ -39,7 +40,8 @@ EDCE_SRCS = memory_database.cc user_account.cc \
 	synthetic_data_generator/synthetic_data_gen_options.cc \
 	log_merge_worker.cc file_prealloc_worker.cc \
 	rpc/hello_world_api.cc hello_world_api_server.cc \
-	rpc/signature_check_api.cc signature_check_api_server.cc
+	rpc/signature_check_api.cc signature_check_api_server.cc \
+	rpc/signature_shard_api.cc signature_shard_api_server.cc
 
 TX_GEN_SRCS = tx_generator/account_manager.cc
 
@@ -79,7 +81,7 @@ MAIN_CCS = synthetic_data_generator/aberrant_datasets_gen.cc \
 	tatonnement_sim.cc trie_comparison.cc save_acclog_fast.cc \
 	hello_world_controller.cc hello_world_server_main.cc \
 	signature_check_controller.cc signature_check_server_main.cc \
-	signature_check_one_machine.cc
+	signature_check_one_machine.cc signature_shard_controller.cc
 
 
 $(MAIN_CCS:.cc=.o) : $(SRC_X_FILES:.x=.h)
@@ -195,6 +197,8 @@ signature_check_controller_SOURCES = $(SRCS) signature_check_controller.cc
 signature_check_server_main_SOURCES = $(SRCS) signature_check_server_main.cc
 
 signature_check_one_machine_SOURCES = $(SRCS) signature_check_one_machine.cc
+
+signature_shard_controller_SOURCES = $(SRCS) signature_shard_controller.cc
 
 CLEANFILES = $(SRC_X_FILES:.x=.h) $(SERVER_X_FILES:.x=.scaffold_h) $(SERVER_X_FILES:.x=.scaffold_cc) \
 	 $(SERVER_X_FILES:.x=.scaffold_h_async) $(SERVER_X_FILES:.x=.scaffold_cc_async)

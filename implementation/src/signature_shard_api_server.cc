@@ -1,11 +1,11 @@
-#include "signature_check_api_server.h"
+#include "signature_shard_api_server.h"
 
 namespace edce {
 
-SignatureCheckApiServer::SignatureCheckApiServer()
+SignatureShardApiServer::SignatureShardApiServer()
     : ps()
-    , signature_check_listener(ps, xdr::tcp_listen(SIGNATURE_CHECK_PORT, AF_INET), false, xdr::session_allocator<void>()) {
-        signature_check_listener.register_service(signature_check_server);
+    , signature_shard_listener(ps, xdr::tcp_listen(SIGNATURE_SHARD_PORT, AF_INET), false, xdr::session_allocator<void>()) {
+        signature_shard_listener.register_service(signature_shard_server);
 
         ps.run();
         //std::thread th([this] {ps.run();});

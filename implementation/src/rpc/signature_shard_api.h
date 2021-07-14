@@ -1,0 +1,22 @@
+#pragma once
+
+#include <xdrpp/arpc.h>
+#include <xdrpp/srpc.h>
+
+#include "xdr/signature_shard_api.h"
+#include "edce_node.h"
+
+namespace edce {
+
+class SignatureShardV1_server {
+
+public:
+  using rpc_interface_type = SignatureShardV1;
+
+  SignatureShardV1_server() {};
+
+  void print_hello_world();
+
+};
+
+}

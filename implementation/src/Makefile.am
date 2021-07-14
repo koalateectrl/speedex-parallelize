@@ -143,7 +143,8 @@ bin_PROGRAMS = database_speed_test test \
 	hello_world_server_main \
 	signature_check_controller \
 	signature_check_server_main \
-	signature_check_one_machine
+	signature_check_one_machine \
+	signature_shard_controller
 
 all-local: xdrpy_module
 

@@ -29,7 +29,6 @@ poll_node(int idx) {
 
     // if works return 0 else if failed return 1
     client.print_hello_world();
-    return return_value;
 }
 
 int main(int argc, char const *argv[]) {

@@ -48,7 +48,7 @@ SignatureShardV1_server::init_shard(const SerializedAccountIDWithPK& account_wit
 
   ExperimentBlock block;
 
-  std::string experiment_root = std::string("experiment_data/basic_allvalid")
+  std::string experiment_root = std::string("experiment_data/basic_allvalid");
   std::string block_filename = experiment_root + std::string("/") + std::string(1) + std::string(".txs");
 
   if (load_xdr_from_file(block, block_filename.c_str())) {
@@ -62,7 +62,7 @@ SignatureShardV1_server::init_shard(const SerializedAccountIDWithPK& account_wit
 
   SerializedBlock serialized_block = xdr::xdr_to_opaque(tx_list);
   
-  size_t num_threads = std::stoi(argv[3]);
+  size_t num_threads = 4;
 
   tbb::global_control control(
     tbb::global_control::max_allowed_parallelism, num_threads);

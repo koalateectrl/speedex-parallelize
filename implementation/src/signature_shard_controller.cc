@@ -22,12 +22,14 @@ std::string hostname_from_idx(int idx) {
 }
 
 void
-init_shard(int idx, const SerializedAccountIDWithPK& account_with_pk, uint16_t num_assets = 20,
+init_shard(int idx, const SerializedAccountIDWithPK& account_with_pk, 
+    const ExperimentParameters& params, uint16_t num_assets = 20,
     uint8_t tax_rate = 10, uint8_t smooth_mult = 10) {
+
     auto fd = xdr::tcp_connect(hostname_from_idx(idx).c_str(), SIGNATURE_SHARD_PORT);
     auto client = xdr::srpc_client<SignatureShardV1>(fd.get());
 
-    uint32_t return_value = *client.init_shard(account_with_pk, num_assets, tax_rate, 
+    uint32_t return_value = *client.init_shard(account_with_pk, params, num_assets, tax_rate, 
         smooth_mult);
     std::cout << return_value << std::endl;
 }
@@ -106,7 +108,7 @@ int main(int argc, char const *argv[]) {
 
     SerializedAccountIDWithPK serialized_account_with_pk = xdr::xdr_to_opaque(account_with_pk_list);
 
-    init_shard(2, serialized_account_with_pk);
+    init_shard(2, serialized_account_with_pk, params);
 
     return 0;
 

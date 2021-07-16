@@ -23,6 +23,7 @@ void SignatureShardV1_server::print_hello_world() {
 
 std::unique_ptr<unsigned int> 
 SignatureShardV1_server::init_shard(const SerializedAccountIDWithPK& account_with_pk, 
+  const ExperimentParameters& params, 
   uint16_t num_assets, uint8_t tax_rate, uint8_t smooth_mult) {
 
   EdceManagementStructures management_structures(

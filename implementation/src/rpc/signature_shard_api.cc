@@ -35,7 +35,7 @@ SignatureShardV1_server::init_shard(const SerializedAccountIDWithPK& account_wit
   AccountIDWithPKList account_with_pk_list;
   xdr::xdr_from_opaque(account_with_pk, account_with_pk_list);
 
-  for (int32_t i = 0; i < account_with_pk_list.size(); i++) {
+  for (size_t i = 0; i < account_with_pk_list.size(); i++) {
     management_structures.db.add_account_to_db(account_with_pk_list[i].account, account_with_pk_list[i].pk);
   }
 

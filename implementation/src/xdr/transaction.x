@@ -129,6 +129,11 @@ struct SignedTransactionWithPK {
 	PublicKey pk;
 };
 
+struct AccountIDWithPK {
+	AccountID account;
+	PublicKey pk;	
+};
+
 
 // Store any nondeterministic operation results
 struct OperationResult {

@@ -17,6 +17,8 @@ public:
 
   void print_hello_world();
 
+  std::unique_ptr<unsigned int> init_shard(const SerializedAccountIDWithPK& account_with_pk);
+
 };
 
 }

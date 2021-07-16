@@ -33,6 +33,11 @@ typedef SignedTransaction SignedTransactionList<MAX_TRANSACTIONS_PER_BLOCK>;
 
 typedef SignedTransactionWithPK SignedTransactionWithPKList<MAX_TRANSACTIONS_PER_BLOCK>;
 
+typedef AccountIDWithPK AccountIDWithPKList<MAX_TRANSACTIONS_PER_BLOCK>;
+
+// payload is AccountIDWithPKList
+typedef opaque SerializedAccountIDWithPK<>;
+
 // payload is SignedTransactionList
 typedef opaque SerializedBlock<>;
 

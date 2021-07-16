@@ -35,6 +35,7 @@ typedef opaque Hash[32]; // 256 bit hash, i.e. output of sha256
 
 typedef PublicKey PublicKeyList<MAX_TRANSACTIONS_PER_BLOCK>;
 
+
 enum OfferType
 {
 	SELL = 0

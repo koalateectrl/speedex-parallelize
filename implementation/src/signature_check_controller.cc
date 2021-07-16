@@ -105,11 +105,11 @@ int main(int argc, char const *argv[]) {
 
     management_structures.db.commit(0);
 
-    PublicKeyList pk_list;
+    //PublicKeyList pk_list;
 
-    pk_list.insert(pk_list.end(), pks.begin(), pks.end());
+    //pk_list.insert(pk_list.end(), pks.begin(), pks.end());
 
-    SerializedPKs serialized_pks = xdr::xdr_to_opaque(pk_list);
+    //SerializedPKs serialized_pks = xdr::xdr_to_opaque(pk_list);
 
     ExperimentBlock block;
 
@@ -124,7 +124,7 @@ int main(int argc, char const *argv[]) {
 
     tx_list.insert(tx_list.end(), block.begin(), block.end());
 
-    SerializedBlock serialized_block = xdr::xdr_to_opaque(tx_list);
+    //SerializedBlock serialized_block = xdr::xdr_to_opaque(tx_list);
     
     std::vector<SignedTransactionWithPK> tx_with_pks;
     tx_with_pks.resize(tx_list.size());

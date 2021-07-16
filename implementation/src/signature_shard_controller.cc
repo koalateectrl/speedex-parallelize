@@ -22,11 +22,13 @@ std::string hostname_from_idx(int idx) {
 }
 
 void
-init_shard(int idx, const SerializedAccountIDWithPK& account_with_pk) {
+init_shard(int idx, const SerializedAccountIDWithPK& account_with_pk, uint16_t num_assets = 20,
+    uint8_t tax_rate = 10, uint8_t smooth_mult = 10) {
     auto fd = xdr::tcp_connect(hostname_from_idx(idx).c_str(), SIGNATURE_SHARD_PORT);
     auto client = xdr::srpc_client<SignatureShardV1>(fd.get());
 
-    uint32_t return_value = *client.init_shard(account_with_pk);
+    uint32_t return_value = *client.init_shard(account_with_pk, num_assets, tax_rate, 
+        smooth_mult);
     std::cout << return_value << std::endl;
 }
 
@@ -47,8 +49,6 @@ int main(int argc, char const *argv[]) {
         std::printf("usage: ./signature_shard_controller experiment_name num_shards\n");
         return -1;
     }
-
-    auto timestamp = init_time_measurement();
 
     DeterministicKeyGenerator key_gen;
 

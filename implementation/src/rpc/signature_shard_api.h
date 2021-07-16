@@ -17,7 +17,8 @@ public:
 
   void print_hello_world();
 
-  std::unique_ptr<unsigned int> init_shard(const SerializedAccountIDWithPK& account_with_pk);
+  std::unique_ptr<unsigned int> init_shard(const SerializedAccountIDWithPK& account_with_pk, 
+    uint16_t num_assets, uint8_t tax_rate, uint8_t smooth_mult);
 
 };
 

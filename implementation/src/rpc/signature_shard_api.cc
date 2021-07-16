@@ -22,7 +22,23 @@ void SignatureShardV1_server::print_hello_world() {
 }
 
 std::unique_ptr<unsigned int> 
-SignatureShardV1_server::init_shard(const SerializedAccountIDWithPK& account_with_pk) {
+SignatureShardV1_server::init_shard(const SerializedAccountIDWithPK& account_with_pk, 
+  uint16_t num_assets, uint8_t tax_rate, uint8_t smooth_mult) {
+
+  EdceManagementStructures management_structures(
+    num_assets,
+    ApproximationParameters {
+      .tax_rate = tax_rate,
+      .smooth_mult = smooth_mult
+    });
+
+  AccountIDWithPKList account_with_pk_list;
+  xdr::xdr_from_opaque(account_with_pk, account_with_pk_list);
+
+  for (int32_t i = 0; i < account_with_pk_list.size(); i++) {
+    management_structures.db.add_account_to_db(account_with_pk_list[i].account, account_with_pk_list[i].pk);
+  }
+
   std::cout << "HELLO WORLD" << std::endl;
   return std::make_unique<unsigned int>(0);
 }

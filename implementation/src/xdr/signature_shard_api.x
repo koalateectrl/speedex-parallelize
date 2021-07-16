@@ -30,7 +30,7 @@ namespace edce {
 program SignatureShard {
     version SignatureShardV1 {
         void print_hello_world(void) = 1;
-        uint32 init_shard(SerializedAccountIDWithPK) = 2;
+        uint32 init_shard(SerializedAccountIDWithPK, uint16, uint8, uint8) = 2;
     } = 1;
 } = 0x11111117;
 

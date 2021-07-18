@@ -45,7 +45,7 @@ SignatureShardV1_server::init_shard(const SerializedAccountIDWithPK& account_wit
 
 
 std::unique_ptr<unsigned int>
-SignatureCheckV1_server::check_all_signatures(const SerializedBlockWithPK& block_with_pk, 
+SignatureShardV1_server::check_all_signatures(const SerializedBlockWithPK& block_with_pk, 
   const uint64& num_threads)
 {
 

@@ -78,6 +78,7 @@ SignatureShardV1_server::check_block(const SerializedBlockWithPK& block_with_pk,
 
 }
 
+//not rpc 
 
 void SignatureShardV1_server::split_transaction_block(const SignedTransactionWithPKList& orig_vec, 
     const size_t num_child_machines, std::vector<SignedTransactionWithPKList>& split_vec) {

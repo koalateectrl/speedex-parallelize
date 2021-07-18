@@ -22,9 +22,13 @@ public:
   std::unique_ptr<unsigned int> check_block(const SerializedBlockWithPK& block_with_pk, 
     const uint64& num_threads);
 
+  // not rpc 
+  
   void split_transaction_block(const SignedTransactionWithPKList& orig_vec, 
     const size_t num_child_machines, std::vector<SignedTransactionWithPKList>& split_vec);
 
+  uint32_t poll_node(int idx, const SerializedBlockWithPK& block_with_pk, 
+    const uint64& num_threads)
 };
 
 }

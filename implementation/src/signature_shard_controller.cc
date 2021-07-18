@@ -35,7 +35,7 @@ init_shard(int idx, const SerializedAccountIDWithPK& account_with_pk,
 }
 
 
-void
+uint32_t
 poll_node(int idx, const SerializedBlockWithPK& block_with_pk) {
     
     auto fd = xdr::tcp_connect(hostname_from_idx(idx).c_str(), SIGNATURE_SHARD_PORT);
@@ -49,7 +49,7 @@ poll_node(int idx, const SerializedBlockWithPK& block_with_pk) {
 
 int main(int argc, char const *argv[]) {
 
-    if (argc != 3) {
+    if (argc != 4) {
         std::printf("usage: ./signature_shard_controller experiment_name block_number num_shards \n");
         return -1;
     }
@@ -147,7 +147,7 @@ int main(int argc, char const *argv[]) {
 
     SerializedBlockWithPK serialized_block_with_pk = xdr::xdr_to_opaque(tx_with_pk_list);
 
-    if (poll_node(i + 2, serialized_block_with_pk) == 1) {
+    if (poll_node(2, serialized_block_with_pk) == 1) {
         throw std::runtime_error("sig checking failed!!!");
     }
 

@@ -38,27 +38,38 @@ SignatureShardV1_server::init_shard(const SerializedAccountIDWithPK& account_wit
 
   management_structures.db.commit(0);
 
-  std::cout << "HELLO WORLD" << std::endl;
+  std::cout << "SUCCESSFULLY LOADED ACCOUNTS" << std::endl;
   return std::make_unique<unsigned int>(0);
 }
 
 
 
 std::unique_ptr<unsigned int>
-SignatureShardV1_server::check_all_signatures(const SerializedBlockWithPK& block_with_pk, 
+SignatureShardV1_server::check_block(const SerializedBlockWithPK& block_with_pk, 
   const uint64& num_threads)
 {
-
   auto timestamp = init_time_measurement();
 
-  SamBlockSignatureChecker sam_checker;
+  SignedTransactionWithPKList tx_with_pk_list;
+  
+  xdr::xdr_from_opaque(block_with_pk, tx_with_pk_list);
 
-  tbb::global_control control(
-    tbb::global_control::max_allowed_parallelism, num_threads);
+  size_t num_child_machines = 1;
 
-  if (!sam_checker.check_all_sigs(block_with_pk)) {
-    return std::make_unique<unsigned int>(1);
-  } 
+  std::vector<SignedTransactionWithPKList> tx_with_pk_split_list;
+
+  split_transaction_block(tx_with_pk_list, num_child_machines, tx_with_pk_split_list);
+
+  tbb::parallel_for(
+        tbb::blocked_range<size_t>(0, num_child_machines),
+        [&tx_with_pk_split_list, &num_child_machines, &num_threads](auto r) {
+            for (size_t i = r.begin(); i != r.end(); i++) {
+                SerializedBlockWithPK serialized_block_with_pk = xdr::xdr_to_opaque(tx_with_pk_split_list[i]);
+                if (poll_node(i + 3, serialized_block_with_pk, num_threads) == 1) {
+                    throw std::runtime_error("sig checking failed!!!");
+                }
+            }
+        });
 
   float res = measure_time(timestamp);
   std::cout << "Total time for check_all_signatures RPC call: " << res << std::endl;
@@ -66,5 +77,36 @@ SignatureShardV1_server::check_all_signatures(const SerializedBlockWithPK& block
   return std::make_unique<unsigned int>(0);
 
 }
+
+
+void SignatureShardV1_server::split_transaction_block(const SignedTransactionWithPKList& orig_vec, 
+    const size_t num_child_machines, std::vector<SignedTransactionWithPKList>& split_vec) {
+    
+    size_t length = orig_vec.size() / num_child_machines;
+    size_t remain = orig_vec.size() % num_child_machines;
+    size_t begin = 0;
+    size_t end = 0;
+
+    for (size_t i = 0; i < std::min(num_child_machines, orig_vec.size()); i++) {
+        end += (remain > 0) ? (length + !!(remain--)) : length;
+        split_vec.push_back(SignedTransactionWithPKList(orig_vec.begin() + begin, orig_vec.begin() + end));
+        begin = end;
+    }
+}
+
+uint32_t
+SignatureShardV1_server::poll_node(int idx, const SerializedBlockWithPK& block_with_pk, 
+    const uint64& num_threads) {
+    
+    auto fd = xdr::tcp_connect(hostname_from_idx(idx).c_str(), SIGNATURE_CHECK_PORT);
+    auto client = xdr::srpc_client<SignatureCheckV1>(fd.get());
+
+    // if works return 0 else if failed return 1
+    uint32_t return_value = *client.check_all_signatures(block_with_pk, num_threads);
+    std::cout << return_value << std::endl;
+    return return_value;
+}
+
+
 
 }

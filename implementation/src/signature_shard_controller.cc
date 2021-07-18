@@ -42,7 +42,7 @@ poll_node(int idx, const SerializedBlockWithPK& block_with_pk) {
     auto client = xdr::srpc_client<SignatureShardV1>(fd.get());
 
     // if works return 0 else if failed return 1
-    uint32_t return_value = *client.check_all_signatures(block_with_pk, 4);
+    uint32_t return_value = *client.check_block(block_with_pk, 4);
     std::cout << return_value << std::endl;
     return return_value;
 }

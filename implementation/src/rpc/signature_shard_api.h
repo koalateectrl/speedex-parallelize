@@ -19,8 +19,11 @@ public:
     const ExperimentParameters& params, 
     uint16_t num_assets, uint8_t tax_rate, uint8_t smooth_mult);
 
-  std::unique_ptr<unsigned int> check_all_signatures(const SerializedBlockWithPK& block_with_pk, 
+  std::unique_ptr<unsigned int> check_block(const SerializedBlockWithPK& block_with_pk, 
     const uint64& num_threads);
+
+  void split_transaction_block(const SignedTransactionWithPKList& orig_vec, 
+    const size_t num_child_machines, std::vector<SignedTransactionWithPKList>& split_vec);
 
 };
 

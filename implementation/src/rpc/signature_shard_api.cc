@@ -62,7 +62,7 @@ SignatureShardV1_server::check_block(const SerializedBlockWithPK& block_with_pk,
 
   tbb::parallel_for(
         tbb::blocked_range<size_t>(0, num_child_machines),
-        [&tx_with_pk_split_list, &num_child_machines, &num_threads](auto r) {
+        [&tx_with_pk_split_list, &num_child_machines, this](auto r) {
             for (size_t i = r.begin(); i != r.end(); i++) {
                 SerializedBlockWithPK serialized_block_with_pk = xdr::xdr_to_opaque(tx_with_pk_split_list[i]);
                 if (poll_node(i + 3, serialized_block_with_pk, num_threads) == 1) {
@@ -106,6 +106,10 @@ SignatureShardV1_server::poll_node(int idx, const SerializedBlockWithPK& block_w
     uint32_t return_value = *client.check_all_signatures(block_with_pk, num_threads);
     std::cout << return_value << std::endl;
     return return_value;
+}
+
+std::string SignatureShardV1_server::hostname_from_idx(int idx) {
+    return std::string("10.10.1.") + std::to_string(idx);
 }
 
 

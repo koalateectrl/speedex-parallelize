@@ -17,10 +17,6 @@
 namespace edce {
 
 //rpc
-void SignatureShardV1_server::print_hello_world() {
-    std::cout << "HELLO WORLD" << std::endl;
-}
-
 std::unique_ptr<unsigned int> 
 SignatureShardV1_server::init_shard(const SerializedAccountIDWithPK& account_with_pk, 
     const ExperimentParameters& params, 
@@ -42,42 +38,33 @@ SignatureShardV1_server::init_shard(const SerializedAccountIDWithPK& account_wit
 
   management_structures.db.commit(0);
 
-  // TEST CODE HERE
+  std::cout << "HELLO WORLD" << std::endl;
+  return std::make_unique<unsigned int>(0);
+}
 
-  BlockSignatureChecker checker(management_structures);
 
-  ExperimentBlock block;
 
-  std::string experiment_root = std::string("experiment_data/basic_allvalid");
-  std::string block_filename = experiment_root + std::string("/") + std::string(1) + std::string(".txs");
+std::unique_ptr<unsigned int>
+SignatureCheckV1_server::check_all_signatures(const SerializedBlockWithPK& block_with_pk, 
+  const uint64& num_threads)
+{
 
-  if (load_xdr_from_file(block, block_filename.c_str())) {
-      std::printf("%s\n", block_filename.c_str());
-      throw std::runtime_error("failed to load tx block");
-  }
+  auto timestamp = init_time_measurement();
 
-  SignedTransactionList tx_list;
-
-  tx_list.insert(tx_list.end(), block.begin(), block.end());
-
-  SerializedBlock serialized_block = xdr::xdr_to_opaque(tx_list);
-  
-  size_t num_threads = 4;
+  SamBlockSignatureChecker sam_checker;
 
   tbb::global_control control(
     tbb::global_control::max_allowed_parallelism, num_threads);
 
-  auto timestamp = init_time_measurement();
+  if (!sam_checker.check_all_sigs(block_with_pk)) {
+    return std::make_unique<unsigned int>(1);
+  } 
 
-  if (!checker.check_all_sigs(serialized_block)) {
-    throw std::runtime_error("sig checking failed!!!");
-  }
+  float res = measure_time(timestamp);
+  std::cout << "Total time for check_all_signatures RPC call: " << res << std::endl;
 
-  /////
-
-
-  std::cout << "HELLO WORLD" << std::endl;
   return std::make_unique<unsigned int>(0);
+
 }
 
 }

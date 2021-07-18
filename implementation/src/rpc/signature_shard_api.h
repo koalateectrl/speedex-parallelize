@@ -15,11 +15,12 @@ public:
 
   SignatureShardV1_server() {};
 
-  void print_hello_world();
-
   std::unique_ptr<unsigned int> init_shard(const SerializedAccountIDWithPK& account_with_pk, 
     const ExperimentParameters& params, 
     uint16_t num_assets, uint8_t tax_rate, uint8_t smooth_mult);
+
+  std::unique_ptr<unsigned int> check_all_signatures(const SerializedBlockWithPK& block_with_pk, 
+    const uint64& num_threads);
 
 };
 

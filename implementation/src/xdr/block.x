@@ -35,16 +35,13 @@ typedef SignedTransactionWithPK SignedTransactionWithPKList<MAX_TRANSACTIONS_PER
 
 typedef AccountIDWithPK AccountIDWithPKList<MAX_TRANSACTIONS_PER_BLOCK>;
 
-// payload is AccountIDWithPKList
-typedef opaque SerializedAccountIDWithPK<>;
-
-// payload is SignedTransactionList
+// payload is SignedTransactionList - in the original code
 typedef opaque SerializedBlock<>;
 
-// payload is PublicKeyList
-typedef opaque SerializedPKs<>;
+// payload is AccountIDWithPKList - used to init accounts from shard controller to shard
+typedef opaque SerializedAccountIDWithPK<>;
 
-// payload is SignedTransactionWithPKList
+// payload is SignedTransactionWithPKList - used to send data to server for signature check
 typedef opaque SerializedBlockWithPK<>;
 
 //struct PartialMiniblock {

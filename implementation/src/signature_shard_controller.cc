@@ -36,19 +36,21 @@ init_shard(int idx, const SerializedAccountIDWithPK& account_with_pk,
 
 
 void
-poll_node(int idx) {
+poll_node(int idx, const SerializedBlockWithPK& block_with_pk) {
     
     auto fd = xdr::tcp_connect(hostname_from_idx(idx).c_str(), SIGNATURE_SHARD_PORT);
     auto client = xdr::srpc_client<SignatureShardV1>(fd.get());
 
     // if works return 0 else if failed return 1
-    client.print_hello_world();
+    uint32_t return_value = *client.check_all_signatures(block_with_pk, 4);
+    std::cout << return_value << std::endl;
+    return return_value;
 }
 
 int main(int argc, char const *argv[]) {
 
     if (argc != 3) {
-        std::printf("usage: ./signature_shard_controller experiment_name num_shards\n");
+        std::printf("usage: ./signature_shard_controller experiment_name block_number num_shards \n");
         return -1;
     }
 
@@ -95,8 +97,6 @@ int main(int argc, char const *argv[]) {
         });
 
     for (int32_t i = 0; i < params.num_accounts; i++) {
-
-        //std::printf("%lu %s\n", account_id_list[i], DebugUtils::__array_to_str(pks.at(i).data(), pks[i].size()).c_str());
         management_structures.db.add_account_to_db(account_with_pks[i].account, account_with_pks[i].pk);
     }
 
@@ -109,6 +109,49 @@ int main(int argc, char const *argv[]) {
     SerializedAccountIDWithPK serialized_account_with_pk = xdr::xdr_to_opaque(account_with_pk_list);
 
     init_shard(2, serialized_account_with_pk, params);
+
+
+    // Send whole block
+
+
+    ExperimentBlock block;
+
+    std::string block_filename = experiment_root + std::string("/") + std::string(argv[2]) + std::string(".txs");
+
+    if (load_xdr_from_file(block, block_filename.c_str())) {
+        std::printf("%s\n", block_filename.c_str());
+        throw std::runtime_error("failed to load tx block");
+    }
+
+    SignedTransactionList tx_list;
+
+    tx_list.insert(tx_list.end(), block.begin(), block.end());
+    
+    std::vector<SignedTransactionWithPK> tx_with_pks;
+    tx_with_pks.resize(tx_list.size());
+
+    tbb::parallel_for(
+        tbb::blocked_range<size_t>(0, tx_list.size()),
+        [&tx_list, &management_structures, &tx_with_pks](auto r) {
+            for (size_t i = r.begin(); i < r.end(); i++) {
+                SignedTransactionWithPK signed_tx_with_pk;
+                signed_tx_with_pk.signedTransaction = tx_list[i];
+                signed_tx_with_pk.pk = *management_structures.db.get_pk_nolock(tx_list[i].transaction.metadata.sourceAccount);
+                tx_with_pks[i] = signed_tx_with_pk;
+            }
+        });
+
+    SignedTransactionWithPKList tx_with_pk_list;
+
+    tx_with_pk_list.insert(tx_with_pk_list.end(), tx_with_pks.begin(), tx_with_pks.end());
+
+    SerializedBlockWithPK serialized_block_with_pk = xdr::xdr_to_opaque(tx_with_pk_list);
+
+    if (poll_node(i + 2, serialized_block_with_pk) == 1) {
+        throw std::runtime_error("sig checking failed!!!");
+    }
+
+    std::cout << "HELLO WORLD" << std::endl;
 
     return 0;
 

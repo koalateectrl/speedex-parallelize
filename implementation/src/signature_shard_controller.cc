@@ -117,9 +117,13 @@ int main(int argc, char const *argv[]) {
         management_structures.db.add_account_to_db(account_with_pks[i].account, account_with_pks[i].pk);
     }
 
-    for (int32_t i = 0; i < 50; i++) {
-        std::cout << account_with_pks[i].account << std::endl;
-        std::cout << account_with_pks[i].account % 10 << std::endl;
+    int num_splits = std::stoi(argv[3]);
+    auto split_ptrs = split_accounts(account_with_pks.begin(), account_with_pks.end(), 
+        [&num_splits] (auto x) {return x.account % num_splits;}, num_splits);
+
+    std::cout << "FIRST PARTITION" << std::endl;
+    for (auto it = account_with_pks.begin(); it != split_ptrs[0]; it++) {
+        std::cout << *it << std::endl;
     }
 
 

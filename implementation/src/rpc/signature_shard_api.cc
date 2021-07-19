@@ -60,12 +60,14 @@ SignatureShardV1_server::check_block(const SerializedBlockWithPK& block_with_pk,
 
   split_transaction_block(tx_with_pk_list, num_child_machines, tx_with_pk_split_list);
 
+  size_t num_threads_lambda = num_threads;
+
   tbb::parallel_for(
         tbb::blocked_range<size_t>(0, num_child_machines),
-        [&tx_with_pk_split_list, &num_child_machines, this](auto r) {
+        [&tx_with_pk_split_list, &num_child_machines, &num_threads_lambda](auto r) {
             for (size_t i = r.begin(); i != r.end(); i++) {
                 SerializedBlockWithPK serialized_block_with_pk = xdr::xdr_to_opaque(tx_with_pk_split_list[i]);
-                if (poll_node(i + 3, serialized_block_with_pk, num_threads) == 1) {
+                if (poll_node(i + 3, serialized_block_with_pk, num_threads_lambda) == 1) {
                     throw std::runtime_error("sig checking failed!!!");
                 }
             }

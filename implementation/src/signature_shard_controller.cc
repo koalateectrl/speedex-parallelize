@@ -21,6 +21,23 @@ std::string hostname_from_idx(int idx) {
     return std::string("10.10.1.") + std::to_string(idx);
 }
 
+template<class ForwardIt, class Condition>
+auto split_accounts(ForwardIt first, ForwardIt last, Condition condition, int num_splits) {
+    std::vector<ForwardIt> split_vec;
+
+    if (num_splits < 2) {
+        split_vec.push_back(last);
+        return split_vec;
+    }
+
+    split_vec.push_back(std::partition(first, last, [&](const auto &v) {return condition(v) == 0;}));
+    for (size_t i = 0; i < num_splits - 2; i++) {
+        split_vec[i + 1] = std::partition(split_vec[i], last, [&](const auto &v) {return condition(v) == (i + 1);});
+    }
+
+    return split_vec;
+}
+
 void
 init_shard(int idx, const SerializedAccountIDWithPK& account_with_pk, 
     const ExperimentParameters& params, uint16_t num_assets = 20,
@@ -49,8 +66,8 @@ poll_node(int idx, const SerializedBlockWithPK& block_with_pk) {
 
 int main(int argc, char const *argv[]) {
 
-    if (argc != 4) {
-        std::printf("usage: ./signature_shard_controller experiment_name block_number num_shards \n");
+    if (argc != 5) {
+        std::printf("usage: ./signature_shard_controller experiment_name block_number num_shards total_machines \n");
         return -1;
     }
 
@@ -99,6 +116,12 @@ int main(int argc, char const *argv[]) {
     for (int32_t i = 0; i < params.num_accounts; i++) {
         management_structures.db.add_account_to_db(account_with_pks[i].account, account_with_pks[i].pk);
     }
+
+    for (int32_t i = 0; i < 50; i++) {
+        std::cout << account_with_pks[i].account << std::endl;
+        std::cout << account_with_pks[i].account % 10 << std::endl;
+    }
+
 
     management_structures.db.commit(0);
 

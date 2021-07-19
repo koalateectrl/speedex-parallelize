@@ -54,7 +54,7 @@ SignatureShardV1_server::check_block(const SerializedBlockWithPK& block_with_pk,
   
   xdr::xdr_from_opaque(block_with_pk, tx_with_pk_list);
 
-  size_t num_child_machines = 1;
+  size_t num_child_machines = 2;
 
   std::vector<SignedTransactionWithPKList> tx_with_pk_split_list;
 

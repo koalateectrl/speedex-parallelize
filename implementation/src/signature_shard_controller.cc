@@ -117,15 +117,7 @@ int main(int argc, char const *argv[]) {
         management_structures.db.add_account_to_db(account_with_pks[i].account, account_with_pks[i].pk);
     }
 
-    int num_splits = std::stoi(argv[3]);
-    auto split_ptrs = split_accounts(account_with_pks.begin(), account_with_pks.end(), 
-        [&num_splits] (auto x) {return x.account % num_splits;}, num_splits);
-
-    std::cout << "FIRST PARTITION" << std::endl;
-    for (auto it = account_with_pks.begin(); it != split_ptrs[0]; it++) {
-        std::cout << *it << std::endl;
-    }
-
+    
 
     management_structures.db.commit(0);
 
@@ -133,7 +125,18 @@ int main(int argc, char const *argv[]) {
 
     account_with_pk_list.insert(account_with_pk_list.end(), account_with_pks.begin(), account_with_pks.end());
 
-    SerializedAccountIDWithPK serialized_account_with_pk = xdr::xdr_to_opaque(account_with_pk_list);
+    int num_splits = std::stoi(argv[3]);
+    auto split_ptrs = split_accounts(account_with_pks.begin(), account_with_pks.end(), 
+        [&num_splits] (auto x) {return x.account % num_splits;}, num_splits);
+
+    std::vector<AccountIDWithPKList> account_with_pk_split_list;
+
+    AccountIDWithPKList first_split;
+    first_split.insert(first_split.end(), account_with_pks.begin(), split_ptrs[0]);
+    account_with_pk_split_list.push_back(first_split);
+
+
+    SerializedAccountIDWithPK serialized_account_with_pk = xdr::xdr_to_opaque(account_with_pk_split_list[0]);
 
     init_shard(2, serialized_account_with_pk, params);
 

@@ -38,7 +38,7 @@ SignatureShardV1_server::init_shard(const SerializedAccountIDWithPK& account_wit
 
   management_structures.db.commit(0);
 
-  std::cout << "SUCCESSFULLY LOADED ACCOUNTS" << std::endl;
+  std::cout << "SUCCESSFULLY LOADED ACCOUNTS " << std::endl;
   return std::make_unique<unsigned int>(0);
 }
 

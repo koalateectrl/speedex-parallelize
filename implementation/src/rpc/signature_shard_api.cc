@@ -64,7 +64,7 @@ SignatureShardV1_server::check_block(const SerializedBlockWithPK& block_with_pk,
 
   tbb::parallel_for(
         tbb::blocked_range<size_t>(0, num_child_machines),
-        [&tx_with_pk_split_list, &num_child_machines, &num_threads_lambda](auto r) {
+        [&](auto r) {
             for (size_t i = r.begin(); i != r.end(); i++) {
                 SerializedBlockWithPK serialized_block_with_pk = xdr::xdr_to_opaque(tx_with_pk_split_list[i]);
                 if (poll_node(i + 3, serialized_block_with_pk, num_threads_lambda) == 1) {

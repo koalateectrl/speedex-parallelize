@@ -58,7 +58,8 @@ SignatureShardV1_server::check_block(const SerializedBlockWithPK& block_with_pk,
   
   xdr::xdr_from_opaque(block_with_pk, tx_with_pk_list);
 
-  size_t num_child_machines = 2;
+  size_t num_child_machines = _checker_end_idx - _checker_begin_idx;
+  size_t checker_begin_idx = _checker_begin_idx;
 
   std::vector<SignedTransactionWithPKList> tx_with_pk_split_list;
 
@@ -71,7 +72,7 @@ SignatureShardV1_server::check_block(const SerializedBlockWithPK& block_with_pk,
         [&](auto r) {
             for (size_t i = r.begin(); i != r.end(); i++) {
                 SerializedBlockWithPK serialized_block_with_pk = xdr::xdr_to_opaque(tx_with_pk_split_list[i]);
-                if (poll_node(i + 3, serialized_block_with_pk, num_threads_lambda) == 1) {
+                if (poll_node(checker_begin_idx + i, serialized_block_with_pk, num_threads_lambda) == 1) {
                     throw std::runtime_error("sig checking failed!!!");
                 }
             }

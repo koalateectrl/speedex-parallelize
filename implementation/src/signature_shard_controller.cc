@@ -155,7 +155,7 @@ int main(int argc, char const *argv[]) {
 
     tbb::parallel_for(
         tbb::blocked_range<size_t>(0, num_shards),
-        [&account_with_pk_split_list, &num_shards, &params](auto r) {
+        [&account_with_pk_split_list, &num_shards, &params, &checker_node_begin_idx, &num_checkers_per_shard] (auto r) {
             for (size_t i = r.begin(); i != r.end(); i++) {
                 SerializedAccountIDWithPK serialized_account_with_pk = xdr::xdr_to_opaque(account_with_pk_split_list[i]);
                 if (init_shard(i + 2, serialized_account_with_pk, params, 

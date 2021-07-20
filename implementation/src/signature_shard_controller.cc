@@ -40,14 +40,15 @@ auto split_accounts(ForwardIt first, ForwardIt last, Condition condition, int nu
 
 uint32_t
 init_shard(int idx, const SerializedAccountIDWithPK& account_with_pk, 
-    const ExperimentParameters& params, uint16_t num_assets = 20,
+    const ExperimentParameters& params, uint16_t checker_begin_idx, 
+    uint16_t checker_end_idx, uint16_t num_assets = 20,
     uint8_t tax_rate = 10, uint8_t smooth_mult = 10) {
 
     auto fd = xdr::tcp_connect(hostname_from_idx(idx).c_str(), SIGNATURE_SHARD_PORT);
     auto client = xdr::srpc_client<SignatureShardV1>(fd.get());
 
-    uint32_t return_value = *client.init_shard(account_with_pk, params, num_assets, tax_rate, 
-        smooth_mult);
+    uint32_t return_value = *client.init_shard(account_with_pk, params, idx, 
+        checker_begin_idx, checker_end_idx, num_assets, tax_rate, smooth_mult);
     std::cout << return_value << std::endl;
     return return_value;
 }
@@ -148,13 +149,18 @@ int main(int argc, char const *argv[]) {
         account_with_pk_split_list.push_back(last_split);
     }
 
+    int total_machines = std::stoi(argv[4]);
+    size_t checker_node_begin_idx = 2 + num_shards;
+    size_t num_checkers_per_shard = (total_machines - num_shards - 1) / num_shards;
 
     tbb::parallel_for(
         tbb::blocked_range<size_t>(0, num_shards),
         [&account_with_pk_split_list, &num_shards, &params](auto r) {
             for (size_t i = r.begin(); i != r.end(); i++) {
                 SerializedAccountIDWithPK serialized_account_with_pk = xdr::xdr_to_opaque(account_with_pk_split_list[i]);
-                if (init_shard(i + 2, serialized_account_with_pk, params) == 1) {
+                if (init_shard(i + 2, serialized_account_with_pk, params, 
+                    checker_node_begin_idx + i * num_checkers_per_shard,
+                    checker_node_begin_idx + (i + 1) * num_checkers_per_shard) == 1) {
                     throw std::runtime_error("init shard failed!!!");
                 }
             }

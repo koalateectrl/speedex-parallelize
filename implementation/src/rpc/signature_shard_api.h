@@ -9,6 +9,9 @@
 namespace edce {
 
 class SignatureShardV1_server {
+  int _ip_idx;
+  int _checker_begin_idx;
+  int _checker_end_idx;
 
 public:
   using rpc_interface_type = SignatureShardV1;
@@ -16,7 +19,9 @@ public:
   SignatureShardV1_server() {};
 
   std::unique_ptr<unsigned int> init_shard(const SerializedAccountIDWithPK& account_with_pk, 
-    const ExperimentParameters& params, 
+    const ExperimentParameters& params, uint16_t ip_idx,
+    uint16_t checker_begin_idx, 
+    uint16_t checker_end_idx,
     uint16_t num_assets, uint8_t tax_rate, uint8_t smooth_mult);
 
   std::unique_ptr<unsigned int> check_block(const SerializedBlockWithPK& block_with_pk, 

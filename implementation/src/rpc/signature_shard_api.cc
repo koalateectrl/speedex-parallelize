@@ -19,8 +19,12 @@ namespace edce {
 //rpc
 std::unique_ptr<unsigned int> 
 SignatureShardV1_server::init_shard(const SerializedAccountIDWithPK& account_with_pk, 
-    const ExperimentParameters& params, 
+    const ExperimentParameters& params, uint16_t ip_idx, uint16_t checker_begin_idx, uint16_t checker_end_idx,
     uint16_t num_assets, uint8_t tax_rate, uint8_t smooth_mult) {
+
+    _ip_idx = ip_idx;
+    _checker_begin_idx = checker_begin_idx;
+    _checker_end_idx = checker_end_idx;
 
     EdceManagementStructures management_structures(
         num_assets,

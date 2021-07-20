@@ -203,9 +203,20 @@ int main(int argc, char const *argv[]) {
 
     SerializedBlockWithPK serialized_block_with_pk = xdr::xdr_to_opaque(tx_with_pk_list);
 
+    tbb::parallel_for(
+        tbb::blocked_range<size_t>(0, num_shards),
+        [&serialized_block_with_pk, &num_threads](auto r) {
+            for (size_t i = r.begin(); i != r.end(); i++) {
+                if (poll_node(i + 2, serialized_block_with_pk, num_threads) == 1) {
+                    throw std::runtime_error("sig checking failed!!!");
+                }
+            }
+        });
+    /*
+    tbb:parallel_for()
     if (poll_node(2, serialized_block_with_pk) == 1) {
         throw std::runtime_error("sig checking failed!!!");
-    }
+    }*/
 
     std::cout << "HELLO WORLD" << std::endl;
 

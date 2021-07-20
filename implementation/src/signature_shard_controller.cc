@@ -38,7 +38,7 @@ auto split_accounts(ForwardIt first, ForwardIt last, Condition condition, int nu
     return split_vec;
 }
 
-void
+uint32_t
 init_shard(int idx, const SerializedAccountIDWithPK& account_with_pk, 
     const ExperimentParameters& params, uint16_t num_assets = 20,
     uint8_t tax_rate = 10, uint8_t smooth_mult = 10) {
@@ -49,6 +49,7 @@ init_shard(int idx, const SerializedAccountIDWithPK& account_with_pk,
     uint32_t return_value = *client.init_shard(account_with_pk, params, num_assets, tax_rate, 
         smooth_mult);
     std::cout << return_value << std::endl;
+    return return_value;
 }
 
 

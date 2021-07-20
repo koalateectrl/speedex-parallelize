@@ -55,21 +55,22 @@ init_shard(int idx, const SerializedAccountIDWithPK& account_with_pk,
 
 
 uint32_t
-poll_node(int idx, const SerializedBlockWithPK& block_with_pk) {
+poll_node(int idx, const SerializedBlockWithPK& block_with_pk, 
+    const uint64& num_threads) {
     
     auto fd = xdr::tcp_connect(hostname_from_idx(idx).c_str(), SIGNATURE_SHARD_PORT);
     auto client = xdr::srpc_client<SignatureShardV1>(fd.get());
 
     // if works return 0 else if failed return 1
-    uint32_t return_value = *client.check_block(block_with_pk, 4);
+    uint32_t return_value = *client.check_block(block_with_pk, num_threads);
     std::cout << return_value << std::endl;
     return return_value;
 }
 
 int main(int argc, char const *argv[]) {
 
-    if (argc != 5) {
-        std::printf("usage: ./signature_shard_controller experiment_name block_number num_shards total_machines \n");
+    if (argc != 6) {
+        std::printf("usage: ./signature_shard_controller experiment_name block_number num_shards num_threads total_machines \n");
         return -1;
     }
 
@@ -149,7 +150,7 @@ int main(int argc, char const *argv[]) {
         account_with_pk_split_list.push_back(last_split);
     }
 
-    int total_machines = std::stoi(argv[4]);
+    int total_machines = std::stoi(argv[5]);
     size_t checker_node_begin_idx = 2 + num_shards;
     size_t num_checkers_per_shard = (total_machines - num_shards - 1) / num_shards;
 
@@ -203,13 +204,13 @@ int main(int argc, char const *argv[]) {
 
     SerializedBlockWithPK serialized_block_with_pk = xdr::xdr_to_opaque(tx_with_pk_list);
 
-    int number_of_threads = num_threads;
+    int num_threads = std::stoi(argv[4]);
 
     tbb::parallel_for(
         tbb::blocked_range<size_t>(0, num_shards),
-        [&serialized_block_with_pk, &number_of_threads](auto r) {
+        [&serialized_block_with_pk, &num_threads](auto r) {
             for (size_t i = r.begin(); i != r.end(); i++) {
-                if (poll_node(i + 2, serialized_block_with_pk, number_of_threads) == 1) {
+                if (poll_node(i + 2, serialized_block_with_pk, num_threads) == 1) {
                     throw std::runtime_error("sig checking failed!!!");
                 }
             }

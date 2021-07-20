@@ -125,9 +125,9 @@ int main(int argc, char const *argv[]) {
 
     account_with_pk_list.insert(account_with_pk_list.end(), account_with_pks.begin(), account_with_pks.end());
 
-    int num_splits = std::stoi(argv[3]);
+    int num_shards = std::stoi(argv[3]);
     auto split_ptrs = split_accounts(account_with_pks.begin(), account_with_pks.end(), 
-        [&num_splits] (auto x) {return x.account % num_splits;}, num_splits);
+        [&num_shards] (auto x) {return x.account % num_shards;}, num_shards);
 
     std::vector<AccountIDWithPKList> account_with_pk_split_list;
 
@@ -135,10 +135,29 @@ int main(int argc, char const *argv[]) {
     first_split.insert(first_split.end(), account_with_pks.begin(), split_ptrs[0]);
     account_with_pk_split_list.push_back(first_split);
 
+    if (num_shards > 1) {
+        for (size_t i = 1; i < num_shards - 1; i++) {
+            AccountIDWithPKList curr_split;
+            curr_split.insert(curr_split.end(), split_ptrs[i - 1], split_ptrs[i]);
+            account_with_pk_split_list.push_back(curr_split);
+        }
 
-    SerializedAccountIDWithPK serialized_account_with_pk = xdr::xdr_to_opaque(account_with_pk_split_list[0]);
+        AccountIDWithPKList last_split;
+        last_split.insert(last_split.end(), split_ptrs[num_shards - 2], account_with_pks.end());
+        account_with_pk_split_list.push_back(last_split);
+    }
 
-    init_shard(2, serialized_account_with_pk, params);
+
+    tbb::parallel_for(
+        tbb::blocked_range<size_t>(0, num_shards),
+        [&account_with_pk_split_list, &num_shards](auto r) {
+            for (size_t i = r.begin(); i != r.end(); i++) {
+                SerializedAccountIDWithPK serialized_account_with_pk = xdr::xdr_to_opaque(account_with_pk_split_list[i]);
+                if (init_shard(i + 2, serialized_account_with_pk, params) == 1) {
+                    throw std::runtime_error("init shard failed!!!");
+                }
+            }
+        });
 
 
     // Send whole block

@@ -6,8 +6,6 @@ cd /users/samwwong
 
 git clone https://github.com/sandymule/xdrpp-hello-world
 
-chmod 777 -R /users/samwwong/xdrpp-hello-world
-
 cd /users/samwwong/xdrpp-hello-world/cloudlab_init_scripts/
 
 sudo bash ./init.sh

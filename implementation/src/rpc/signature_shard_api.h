@@ -30,7 +30,7 @@ public:
 
   // not rpc
 
-  void SignatureShardV1_server::filter_txs(const SignedTransactionWithPKList& tx_with_pk_list, 
+  void filter_txs(const SignedTransactionWithPKList& tx_with_pk_list, 
     SignedTransactionWithPKList& filtered_tx_with_pk_list);
 
   void split_transaction_block(const SignedTransactionWithPKList& orig_vec, 

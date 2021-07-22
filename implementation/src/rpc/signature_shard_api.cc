@@ -89,7 +89,7 @@ void SignatureShardV1_server::filter_txs(const SignedTransactionWithPKList& tx_w
 
     auto timestamp = init_time_measurement();
     std::vector<SignedTransactionWithPK> tx_with_pks;
-    std::cout <"TX WITH PK LIST SIZE: " << std::endl;
+    std::cout << "TX WITH PK LIST SIZE: " << std::endl;
     std::cout << tx_with_pk_list.size() << std::endl;
     for (size_t i = 0; i < tx_with_pk_list.size(); i++) {
         if (_management_structures.db.get_pk_nolock(tx_with_pk_list[i].signedTransaction.transaction.metadata.sourceAccount)) {

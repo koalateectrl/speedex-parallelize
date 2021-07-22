@@ -72,6 +72,7 @@ int main(int argc, char const *argv[]) {
     }
 
     auto timestamp = init_time_measurement();
+    auto setup_timestamp = init_time_measurement();
 
     std::cout << "SETUP (READING XDR AND LOADING PARAMS ETC)" << std::endl;
 
@@ -153,7 +154,7 @@ int main(int argc, char const *argv[]) {
     size_t checker_node_begin_idx = 2 + num_shards;
     size_t num_checkers_per_shard = (total_machines - num_shards - 1) / num_shards;
 
-    auto setup_res = measure_time(timestamp);
+    auto setup_res = measure_time(setup_timestamp);
 
     std::cout << "Setup in " << setup_res << std::endl;
 

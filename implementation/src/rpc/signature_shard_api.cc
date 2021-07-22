@@ -87,6 +87,7 @@ SignatureShardV1_server::check_block(const SerializedBlockWithPK& block_with_pk,
 void SignatureShardV1_server::filter_txs(const SignedTransactionWithPKList& tx_with_pk_list, 
     SignedTransactionWithPKList& filtered_tx_with_pk_list) {
 
+    auto timestamp = init_time_measurement();
     std::vector<SignedTransactionWithPK> tx_with_pks;
     std::cout <"TX WITH PK LIST SIZE: " << std::endl;
     std::cout << tx_with_pk_list.size() << std::endl;
@@ -100,6 +101,9 @@ void SignatureShardV1_server::filter_txs(const SignedTransactionWithPKList& tx_w
 
     std::cout << "FILTERED LIST SIZE: " << std::endl;
     std::cout << filtered_tx_with_pk_list.size() << std::endl;
+    float res = measure_time(timestamp);
+    std::cout << "Total time for FILTERING: " << res << std::endl;
+
 
 }
 

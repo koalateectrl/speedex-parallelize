@@ -28,7 +28,10 @@ public:
   std::unique_ptr<unsigned int> check_block(const SerializedBlockWithPK& block_with_pk, 
     const uint64& num_threads);
 
-  // not rpc 
+  // not rpc
+
+  void SignatureShardV1_server::filter_txs(const SignedTransactionWithPKList& tx_with_pk_list, 
+    SignedTransactionWithPKList& filtered_tx_with_pk_list);
 
   void split_transaction_block(const SignedTransactionWithPKList& orig_vec, 
     const size_t num_child_machines, std::vector<SignedTransactionWithPKList>& split_vec);

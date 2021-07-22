@@ -51,6 +51,10 @@ SignatureShardV1_server::check_block(const SerializedBlockWithPK& block_with_pk,
   
   xdr::xdr_from_opaque(block_with_pk, tx_with_pk_list);
 
+  SignedTransactionWithPKList filtered_tx_with_pk_list;
+
+  filter_txs(tx_with_pk_list, filtered_tx_with_pk_list);
+
   size_t num_child_machines = _checker_end_idx - _checker_begin_idx;
   size_t checker_begin_idx = _checker_begin_idx;
 
@@ -79,6 +83,25 @@ SignatureShardV1_server::check_block(const SerializedBlockWithPK& block_with_pk,
 }
 
 //not rpc 
+
+void SignatureShardV1_server::filter_txs(const SignedTransactionWithPKList& tx_with_pk_list, 
+    SignedTransactionWithPKList& filtered_tx_with_pk_list) {
+
+    std::vector<SignedTransactionWithPK> tx_with_pks;
+    std::cout <"TX WITH PK LIST SIZE: " << std::endl;
+    std::cout << tx_with_pk_list.size() << std::endl;
+    for (size_t i = 0; i < tx_with_pk_list.size(); i++) {
+        if (_management_structures.db.get_pk_nolock(tx_with_pk_list[i].signedTransaction.transaction.metadata.sourceAccount)) {
+            tx_with_pks.append(tx_with_pk_list[i]);
+        }
+    }
+
+    filtered_tx_with_pk_list.insert(filtered_tx_with_pk_list.end(), tx_with_pks.begin(), tx_with_pks.end());
+
+    std::cout << "FILTERED LIST SIZE: " << std::endl;
+    std::cout << filtered_tx_with_pk_list.size() << std::endl;
+
+}
 
 SignatureShardV1_server::SignatureShardV1_server()
     : _management_structures(EdceManagementStructures{20, ApproximationParameters{.tax_rate = 10, .smooth_mult = 10}}) {}

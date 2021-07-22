@@ -8,7 +8,11 @@ sudo ./configure
 
 sudo make || true
 
-cd /users/samwwong/xdrpp-hello-world/implementation/src
+cd /users/samwwong/xdrpp-hello-world
+
+sudo chmod 777 -R .
+
+cd ./implementation/src
 
 sudo make synthetic_data_gen
 

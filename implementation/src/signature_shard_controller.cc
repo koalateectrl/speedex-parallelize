@@ -215,11 +215,6 @@ int main(int argc, char const *argv[]) {
                 }
             }
         });
-    /*
-    tbb:parallel_for()
-    if (poll_node(2, serialized_block_with_pk) == 1) {
-        throw std::runtime_error("sig checking failed!!!");
-    }*/
 
     std::cout << "HELLO WORLD" << std::endl;
 

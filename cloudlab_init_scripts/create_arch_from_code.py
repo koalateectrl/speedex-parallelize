@@ -22,7 +22,7 @@ for i in range(0, params.n):
     node = request.RawPC("node-" + str(i))
     node.hardware_type = params.hardware
     node.disk_image = "urn:publicid:IDN+utah.cloudlab.us+image+edce-PG0:single-machine"
-    node.addService(rspec.Execute(shell="bash", command = "sudo bash /opt/init_from_script.sh dummyarg " + str(params.hardware)))#"sudo chmod u+x /opt/init_xfs.sh; sudo /opt/init_xfs.sh"))
+    node.addService(rspec.Execute(shell="bash", command = "sudo bash /opt/init_from_script.sh"))
     nodes.append(node)
 
 link = request.Link(members = nodes)

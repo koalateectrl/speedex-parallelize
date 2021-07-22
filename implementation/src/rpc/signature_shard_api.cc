@@ -60,7 +60,7 @@ SignatureShardV1_server::check_block(const SerializedBlockWithPK& block_with_pk,
 
   std::vector<SignedTransactionWithPKList> tx_with_pk_split_list;
 
-  split_transaction_block(tx_with_pk_list, num_child_machines, tx_with_pk_split_list);
+  split_transaction_block(filtered_tx_with_pk_list, num_child_machines, tx_with_pk_split_list);
 
   size_t num_threads_lambda = num_threads;
 

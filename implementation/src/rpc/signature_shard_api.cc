@@ -16,7 +16,8 @@
 
 namespace edce {
 
-//rpc
+// rpc
+
 std::unique_ptr<unsigned int> 
 SignatureShardV1_server::init_shard(const SerializedAccountIDWithPK& account_with_pk, 
     const ExperimentParameters& params, uint16_t ip_idx, uint16_t checker_begin_idx, uint16_t checker_end_idx,
@@ -43,28 +44,36 @@ SignatureShardV1_server::init_shard(const SerializedAccountIDWithPK& account_wit
 
 std::unique_ptr<unsigned int>
 SignatureShardV1_server::check_block(const SerializedBlockWithPK& block_with_pk, 
-  const uint64& num_threads)
-{
-  auto timestamp = init_time_measurement();
+  const uint64_t& num_threads) {
+    auto timestamp = init_time_measurement();
 
-  SignedTransactionWithPKList tx_with_pk_list;
-  
-  xdr::xdr_from_opaque(block_with_pk, tx_with_pk_list);
+    SignedTransactionWithPKList tx_with_pk_list;
 
-  SignedTransactionWithPKList filtered_tx_with_pk_list;
+    xdr::xdr_from_opaque(block_with_pk, tx_with_pk_list);
 
-  filter_txs(tx_with_pk_list, filtered_tx_with_pk_list);
+    std::cout << "Total number of signatures in transaction block: " << tx_with_pk_list.size() << std::endl;
 
-  size_t num_child_machines = _checker_end_idx - _checker_begin_idx;
-  size_t checker_begin_idx = _checker_begin_idx;
+    auto filter_timestamp = init_time_measurement();
 
-  std::vector<SignedTransactionWithPKList> tx_with_pk_split_list;
+    SignedTransactionWithPKList filtered_tx_with_pk_list;
 
-  split_transaction_block(filtered_tx_with_pk_list, num_child_machines, tx_with_pk_split_list);
+    filter_txs(tx_with_pk_list, filtered_tx_with_pk_list);
 
-  size_t num_threads_lambda = num_threads;
+    std::cout << "Number of signatures this shard is responsible for: " << filtered_tx_with_pk_list.size() << std::endl;
 
-  tbb::parallel_for(
+    float filter_res = measure_time(filter_timestamp);
+    std::cout << "Filtered signatures in " << filter_res << std::endl;
+
+    size_t num_child_machines = _checker_end_idx - _checker_begin_idx;
+    size_t checker_begin_idx = _checker_begin_idx;
+
+    std::vector<SignedTransactionWithPKList> tx_with_pk_split_list;
+
+    split_transaction_block(filtered_tx_with_pk_list, num_child_machines, tx_with_pk_split_list);
+
+    size_t num_threads_lambda = num_threads;
+
+    tbb::parallel_for(
         tbb::blocked_range<size_t>(0, num_child_machines),
         [&](auto r) {
             for (size_t i = r.begin(); i != r.end(); i++) {
@@ -75,22 +84,26 @@ SignatureShardV1_server::check_block(const SerializedBlockWithPK& block_with_pk,
             }
         });
 
-  float res = measure_time(timestamp);
-  std::cout << "Total time for check_all_signatures RPC call: " << res << std::endl;
+    float res = measure_time(timestamp);
+    std::cout << "Total time for check_all_signatures RPC call for this shard: " << res << std::endl;
 
-  return std::make_unique<unsigned int>(0);
+    return std::make_unique<unsigned int>(0);
 
 }
 
-//not rpc 
+// not rpc 
+SignatureShardV1_server::SignatureShardV1_server()
+    : _management_structures(EdceManagementStructures{20, ApproximationParameters{.tax_rate = 10, .smooth_mult = 10}}) {}
+
+std::string SignatureShardV1_server::hostname_from_idx(int idx) {
+    return std::string("10.10.1.") + std::to_string(idx);
+}
 
 void SignatureShardV1_server::filter_txs(const SignedTransactionWithPKList& tx_with_pk_list, 
     SignedTransactionWithPKList& filtered_tx_with_pk_list) {
 
-    auto timestamp = init_time_measurement();
     std::vector<SignedTransactionWithPK> tx_with_pks;
-    std::cout << "TX WITH PK LIST SIZE: " << std::endl;
-    std::cout << tx_with_pk_list.size() << std::endl;
+
     for (size_t i = 0; i < tx_with_pk_list.size(); i++) {
         if (_management_structures.db.get_pk_nolock(tx_with_pk_list[i].signedTransaction.transaction.metadata.sourceAccount)) {
             tx_with_pks.push_back(tx_with_pk_list[i]);
@@ -98,17 +111,8 @@ void SignatureShardV1_server::filter_txs(const SignedTransactionWithPKList& tx_w
     }
 
     filtered_tx_with_pk_list.insert(filtered_tx_with_pk_list.end(), tx_with_pks.begin(), tx_with_pks.end());
-
-    std::cout << "FILTERED LIST SIZE: " << std::endl;
-    std::cout << filtered_tx_with_pk_list.size() << std::endl;
-    float res = measure_time(timestamp);
-    std::cout << "Total time for FILTERING: " << res << std::endl;
-
-
 }
 
-SignatureShardV1_server::SignatureShardV1_server()
-    : _management_structures(EdceManagementStructures{20, ApproximationParameters{.tax_rate = 10, .smooth_mult = 10}}) {}
 
 void SignatureShardV1_server::split_transaction_block(const SignedTransactionWithPKList& orig_vec, 
     const size_t num_child_machines, std::vector<SignedTransactionWithPKList>& split_vec) {
@@ -127,21 +131,13 @@ void SignatureShardV1_server::split_transaction_block(const SignedTransactionWit
 
 uint32_t
 SignatureShardV1_server::poll_node(int idx, const SerializedBlockWithPK& block_with_pk, 
-    const uint64& num_threads) {
+    const uint64_t& num_threads) {
     
     auto fd = xdr::tcp_connect(hostname_from_idx(idx).c_str(), SIGNATURE_CHECK_PORT);
     auto client = xdr::srpc_client<SignatureCheckV1>(fd.get());
 
-    // if works return 0 else if failed return 1
     uint32_t return_value = *client.check_all_signatures(block_with_pk, num_threads);
-    std::cout << return_value << std::endl;
     return return_value;
 }
-
-std::string SignatureShardV1_server::hostname_from_idx(int idx) {
-    return std::string("10.10.1.") + std::to_string(idx);
-}
-
-
 
 }

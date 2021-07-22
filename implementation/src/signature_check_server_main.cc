@@ -3,7 +3,7 @@
 
 
 using namespace edce;
-    
+
 int main(int argc, char const *argv[]) {
 
     if (argc != 2) {

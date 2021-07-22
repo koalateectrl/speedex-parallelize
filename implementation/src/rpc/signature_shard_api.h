@@ -9,37 +9,38 @@
 namespace edce {
 
 class SignatureShardV1_server {
-  int _ip_idx;
-  int _checker_begin_idx;
-  int _checker_end_idx;
-  EdceManagementStructures _management_structures;
+    int _ip_idx;
+    int _checker_begin_idx;
+    int _checker_end_idx;
+    EdceManagementStructures _management_structures;
 
 public:
-  using rpc_interface_type = SignatureShardV1;
+    using rpc_interface_type = SignatureShardV1;
 
-  SignatureShardV1_server();
+    SignatureShardV1_server();
 
-  std::unique_ptr<unsigned int> init_shard(const SerializedAccountIDWithPK& account_with_pk, 
-    const ExperimentParameters& params, uint16_t ip_idx,
-    uint16_t checker_begin_idx, 
-    uint16_t checker_end_idx,
-    uint16_t num_assets, uint8_t tax_rate, uint8_t smooth_mult);
+    std::unique_ptr<unsigned int> init_shard(const SerializedAccountIDWithPK& account_with_pk, 
+        const ExperimentParameters& params, uint16_t ip_idx,
+        uint16_t checker_begin_idx, 
+        uint16_t checker_end_idx,
+        uint16_t num_assets, uint8_t tax_rate, uint8_t smooth_mult);
 
-  std::unique_ptr<unsigned int> check_block(const SerializedBlockWithPK& block_with_pk, 
-    const uint64& num_threads);
+    std::unique_ptr<unsigned int> check_block(const SerializedBlockWithPK& block_with_pk, 
+        const uint64& num_threads);
 
-  // not rpc
+    // not rpc
 
-  void filter_txs(const SignedTransactionWithPKList& tx_with_pk_list, 
-    SignedTransactionWithPKList& filtered_tx_with_pk_list);
+    std::string hostname_from_idx(int idx);
 
-  void split_transaction_block(const SignedTransactionWithPKList& orig_vec, 
-    const size_t num_child_machines, std::vector<SignedTransactionWithPKList>& split_vec);
+    void filter_txs(const SignedTransactionWithPKList& tx_with_pk_list, 
+        SignedTransactionWithPKList& filtered_tx_with_pk_list);
 
-  uint32_t poll_node(int idx, const SerializedBlockWithPK& block_with_pk, 
-    const uint64& num_threads);
+    void split_transaction_block(const SignedTransactionWithPKList& orig_vec, 
+        const size_t num_child_machines, std::vector<SignedTransactionWithPKList>& split_vec);
 
-  std::string hostname_from_idx(int idx);
+    uint32_t poll_node(int idx, const SerializedBlockWithPK& block_with_pk, 
+        const uint64_t& num_threads);
+
 };
 
 }

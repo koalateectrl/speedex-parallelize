@@ -22,20 +22,20 @@ std::string hostname_from_idx(int idx) {
 }
 
 template<class ForwardIt, class Condition>
-auto split_accounts(ForwardIt first, ForwardIt last, Condition condition, int num_splits) {
-    std::vector<ForwardIt> split_vec;
+auto shard_accounts(ForwardIt first, ForwardIt last, Condition condition, uint64_t num_shards) {
+    std::vector<ForwardIt> shard_vec;
 
-    if (num_splits < 2) {
-        split_vec.push_back(last);
-        return split_vec;
+    if (num_shards < 2) {
+        shard_vec.push_back(last);
+        return shard_vec;
     }
 
-    split_vec.push_back(std::partition(first, last, [&](const auto &v) {return condition(v) == 0;}));
-    for (size_t i = 0; i < num_splits - 2; i++) {
-        split_vec[i + 1] = std::partition(split_vec[i], last, [&](const auto &v) {return condition(v) == (i + 1);});
+    shard_vec.push_back(std::partition(first, last, [&](const auto &v) {return condition(v) == 0;}));
+    for (size_t i = 0; i < num_shards - 2; i++) {
+        shard_vec[i + 1] = std::partition(shard_vec[i], last, [&](const auto &v) {return condition(v) == (i + 1);});
     }
 
-    return split_vec;
+    return shard_vec;
 }
 
 uint32_t
@@ -49,21 +49,18 @@ init_shard(int idx, const SerializedAccountIDWithPK& account_with_pk,
 
     uint32_t return_value = *client.init_shard(account_with_pk, params, idx, 
         checker_begin_idx, checker_end_idx, num_assets, tax_rate, smooth_mult);
-    std::cout << return_value << std::endl;
     return return_value;
 }
 
 
 uint32_t
 poll_node(int idx, const SerializedBlockWithPK& block_with_pk, 
-    const uint64& num_threads) {
+    const uint64_t& num_threads) {
     
     auto fd = xdr::tcp_connect(hostname_from_idx(idx).c_str(), SIGNATURE_SHARD_PORT);
     auto client = xdr::srpc_client<SignatureShardV1>(fd.get());
 
-    // if works return 0 else if failed return 1
     uint32_t return_value = *client.check_block(block_with_pk, num_threads);
-    std::cout << return_value << std::endl;
     return return_value;
 }
 
@@ -73,6 +70,10 @@ int main(int argc, char const *argv[]) {
         std::printf("usage: ./signature_shard_controller experiment_name block_number num_shards num_threads total_machines \n");
         return -1;
     }
+
+    auto timestamp = init_time_measurement();
+
+    std::cout << "SETUP (READING XDR AND LOADING PARAMS ETC)" << std::endl;
 
     DeterministicKeyGenerator key_gen;
 
@@ -93,7 +94,7 @@ int main(int argc, char const *argv[]) {
             .smooth_mult = 10
         });
 
-    std::printf("num accounts: %u\n", params.num_accounts);
+    std::cout << "Total Number of Accounts: " << params.num_accounts << std::endl;
 
     AccountIDList account_id_list;
 
@@ -120,45 +121,51 @@ int main(int argc, char const *argv[]) {
         management_structures.db.add_account_to_db(account_with_pks[i].account, account_with_pks[i].pk);
     }
 
-    
-
     management_structures.db.commit(0);
 
     AccountIDWithPKList account_with_pk_list;
 
     account_with_pk_list.insert(account_with_pk_list.end(), account_with_pks.begin(), account_with_pks.end());
 
-    int num_shards = std::stoi(argv[3]);
-    auto split_ptrs = split_accounts(account_with_pks.begin(), account_with_pks.end(), 
+    size_t num_shards = std::stoul(argv[3]);
+    auto shard_ptrs = shard_accounts(account_with_pks.begin(), account_with_pks.end(), 
         [&num_shards] (auto x) {return x.account % num_shards;}, num_shards);
 
-    std::vector<AccountIDWithPKList> account_with_pk_split_list;
+    std::vector<AccountIDWithPKList> account_with_pk_shard_list;
 
-    AccountIDWithPKList first_split;
-    first_split.insert(first_split.end(), account_with_pks.begin(), split_ptrs[0]);
-    account_with_pk_split_list.push_back(first_split);
+    AccountIDWithPKList first_shard;
+    first_shard.insert(first_shard.end(), account_with_pks.begin(), shard_ptrs[0]);
+    account_with_pk_shard_list.push_back(first_shard);
 
     if (num_shards > 1) {
         for (size_t i = 1; i < num_shards - 1; i++) {
-            AccountIDWithPKList curr_split;
-            curr_split.insert(curr_split.end(), split_ptrs[i - 1], split_ptrs[i]);
-            account_with_pk_split_list.push_back(curr_split);
+            AccountIDWithPKList curr_shard;
+            curr_shard.insert(curr_shard.end(), shard_ptrs[i - 1], shard_ptrs[i]);
+            account_with_pk_shard_list.push_back(curr_shard);
         }
 
-        AccountIDWithPKList last_split;
-        last_split.insert(last_split.end(), split_ptrs[num_shards - 2], account_with_pks.end());
-        account_with_pk_split_list.push_back(last_split);
+        AccountIDWithPKList last_shard;
+        last_shard.insert(last_shard.end(), shard_ptrs[num_shards - 2], account_with_pks.end());
+        account_with_pk_shard_list.push_back(last_shard);
     }
 
-    int total_machines = std::stoi(argv[5]);
+    size_t total_machines = std::stoul(argv[5]);
     size_t checker_node_begin_idx = 2 + num_shards;
     size_t num_checkers_per_shard = (total_machines - num_shards - 1) / num_shards;
 
+    auto setup_res = measure_time(timestamp);
+
+    std::cout << "Setup in " << setup_res << std::endl;
+
+    std::cout << "INITIALIZING SHARDS BY SENDING ACCOUNT DATA" << std::endl;
+
+    auto init_timestamp = init_time_measurement();
+
     tbb::parallel_for(
         tbb::blocked_range<size_t>(0, num_shards),
-        [&account_with_pk_split_list, &num_shards, &params, &checker_node_begin_idx, &num_checkers_per_shard] (auto r) {
+        [&account_with_pk_shard_list, &num_shards, &params, &checker_node_begin_idx, &num_checkers_per_shard] (auto r) {
             for (size_t i = r.begin(); i != r.end(); i++) {
-                SerializedAccountIDWithPK serialized_account_with_pk = xdr::xdr_to_opaque(account_with_pk_split_list[i]);
+                SerializedAccountIDWithPK serialized_account_with_pk = xdr::xdr_to_opaque(account_with_pk_shard_list[i]);
                 if (init_shard(i + 2, serialized_account_with_pk, params, 
                     checker_node_begin_idx + i * num_checkers_per_shard,
                     checker_node_begin_idx + (i + 1) * num_checkers_per_shard) == 1) {
@@ -167,9 +174,16 @@ int main(int argc, char const *argv[]) {
             }
         });
 
+    float init_res = measure_time(init_timestamp);
+
+    std::cout << "Initialized shards in " << init_res << std::endl;
+
 
     // Send whole block
 
+    std::cout << "SIGNATURE CHECKING " << std::endl;
+
+    auto sig_timestamp = init_time_measurement();
 
     ExperimentBlock block;
 
@@ -204,7 +218,7 @@ int main(int argc, char const *argv[]) {
 
     SerializedBlockWithPK serialized_block_with_pk = xdr::xdr_to_opaque(tx_with_pk_list);
 
-    int num_threads = std::stoi(argv[4]);
+    size_t num_threads = std::stoul(argv[4]);
 
     tbb::parallel_for(
         tbb::blocked_range<size_t>(0, num_shards),
@@ -216,7 +230,14 @@ int main(int argc, char const *argv[]) {
             }
         });
 
-    std::cout << "HELLO WORLD" << std::endl;
+    float res = measure_time(timestamp);
+    float sig_res = measure_time(sig_timestamp);
+
+    std::cout << "Checked " << tx_list.size() << " signatures in " << sig_res << std::endl;
+
+    std::cout << "Finished entire process in " << res << 
+    " with " << num_shards << " shards, with each worker with max " << num_threads << " threads, and " <<
+    total_machines << " total machines" << std::endl;
 
     return 0;
 

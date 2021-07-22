@@ -12,11 +12,12 @@ class SignatureShardV1_server {
   int _ip_idx;
   int _checker_begin_idx;
   int _checker_end_idx;
+  EdceManagementStructures _management_structures;
 
 public:
   using rpc_interface_type = SignatureShardV1;
 
-  SignatureShardV1_server() {};
+  SignatureShardV1_server();
 
   std::unique_ptr<unsigned int> init_shard(const SerializedAccountIDWithPK& account_with_pk, 
     const ExperimentParameters& params, uint16_t ip_idx,

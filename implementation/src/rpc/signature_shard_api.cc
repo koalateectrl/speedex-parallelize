@@ -26,24 +26,17 @@ SignatureShardV1_server::init_shard(const SerializedAccountIDWithPK& account_wit
     _checker_begin_idx = checker_begin_idx;
     _checker_end_idx = checker_end_idx;
 
-    EdceManagementStructures management_structures(
-        num_assets,
-        ApproximationParameters {
-          .tax_rate = tax_rate,
-          .smooth_mult = smooth_mult
-        });
+    AccountIDWithPKList account_with_pk_list;
+    xdr::xdr_from_opaque(account_with_pk, account_with_pk_list);
 
-  AccountIDWithPKList account_with_pk_list;
-  xdr::xdr_from_opaque(account_with_pk, account_with_pk_list);
+    for (size_t i = 0; i < account_with_pk_list.size(); i++) {
+        _management_structures.db.add_account_to_db(account_with_pk_list[i].account, account_with_pk_list[i].pk);
+    }
 
-  for (size_t i = 0; i < account_with_pk_list.size(); i++) {
-      management_structures.db.add_account_to_db(account_with_pk_list[i].account, account_with_pk_list[i].pk);
-  }
+    _management_structures.db.commit(0);
 
-  management_structures.db.commit(0);
-
-  std::cout << "SUCCESSFULLY LOADED ACCOUNTS " << std::endl;
-  return std::make_unique<unsigned int>(0);
+    std::cout << "SUCCESSFULLY LOADED ACCOUNTS " << std::endl;
+    return std::make_unique<unsigned int>(0);
 }
 
 
@@ -86,6 +79,9 @@ SignatureShardV1_server::check_block(const SerializedBlockWithPK& block_with_pk,
 }
 
 //not rpc 
+
+SignatureShardV1_server::SignatureShardV1_server()
+    : _management_structures(EdceManagementStructures{20, ApproximationParameters{.tax_rate = 10, .smooth_mult = 10}}) {}
 
 void SignatureShardV1_server::split_transaction_block(const SignedTransactionWithPKList& orig_vec, 
     const size_t num_child_machines, std::vector<SignedTransactionWithPKList>& split_vec) {

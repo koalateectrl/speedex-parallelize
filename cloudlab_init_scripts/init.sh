@@ -1,5 +1,5 @@
 #!/bin/bash
-'
+
 cd /users/samwwong/xdrpp-hello-world/implementation
 
 sudo ./autogen.sh
@@ -29,4 +29,3 @@ sudo make signature_check_server_main
 cd /users/samwwong/xdrpp-hello-world/
 
 chmod 777 -R .
-'

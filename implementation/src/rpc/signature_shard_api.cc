@@ -14,6 +14,8 @@
 #include "edce_management_structures.h"
 #include "tbb/global_control.h"
 
+#include <mutex>
+
 namespace edce {
 
 // rpc
@@ -104,11 +106,18 @@ void SignatureShardV1_server::filter_txs(const SignedTransactionWithPKList& tx_w
 
     std::vector<SignedTransactionWithPK> tx_with_pks;
 
-    for (size_t i = 0; i < tx_with_pk_list.size(); i++) {
-        if (_management_structures.db.get_pk_nolock(tx_with_pk_list[i].signedTransaction.transaction.metadata.sourceAccount)) {
-            tx_with_pks.push_back(tx_with_pk_list[i]);
-        }
-    }
+    std::mutex tx_with_pks_mutex;
+
+    tbb::parallel_for(
+        tbb::blocked_range<size_t>(0, tx_with_pk_list.size()),
+        [&tx_with_pks, &tx_with_pk_list, &tx_with_pks_mutex, this](auto r) {
+            for (size_t i = r.begin(); i < r.end(); i++) {
+                if (_management_structures.db.get_pk_nolock(tx_with_pk_list[i].signedTransaction.transaction.metadata.sourceAccount)) {
+                    std::lock_guard<std::mutex> lock(tx_with_pks_mutex);
+                    tx_with_pks.push_back(tx_with_pk_list[i]);
+                }
+            }
+        });
 
     filtered_tx_with_pk_list.insert(filtered_tx_with_pk_list.end(), tx_with_pks.begin(), tx_with_pks.end());
 }

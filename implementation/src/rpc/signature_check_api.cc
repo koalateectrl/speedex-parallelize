@@ -33,6 +33,8 @@ SignatureCheckV1_server::check_all_signatures(const SerializedBlockWithPK& block
 
   auto timestamp = init_time_measurement();
 
+  print_local_ip();
+
   SamBlockSignatureChecker sam_checker;
 
   tbb::global_control control(

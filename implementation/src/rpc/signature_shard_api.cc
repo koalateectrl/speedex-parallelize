@@ -197,6 +197,7 @@ SignatureShardV1_server::print_local_ip() {
     } else {
         std::cout << "Local ip address: " << buf << "\n";
     }
+    return 0;
 }
 
 }

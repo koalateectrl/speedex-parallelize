@@ -160,7 +160,7 @@ SignatureShardV1_server::poll_node(int idx, const SerializedBlockWithPK& block_w
 }
 
 
-void
+uint32_t
 SignatureShardV1_server::print_local_ip() {
     int sock = socket(PF_INET, SOCK_DGRAM, 0);
     sockaddr_in loopback;

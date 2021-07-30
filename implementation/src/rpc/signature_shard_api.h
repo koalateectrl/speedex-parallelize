@@ -41,7 +41,7 @@ public:
     uint32_t poll_node(int idx, const SerializedBlockWithPK& block_with_pk, 
         const uint64_t& num_threads);
 
-    void print_local_ip();
+    uint32_t print_local_ip();
 
 };
 

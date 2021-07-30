@@ -18,6 +18,8 @@ public:
   std::unique_ptr<unsigned int> check_all_signatures(const SerializedBlockWithPK& block_with_pk, 
     const uint64& num_threads);
 
+  uint32_t print_local_ip();
+
 };
 
 }

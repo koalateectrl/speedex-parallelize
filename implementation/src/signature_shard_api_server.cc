@@ -4,7 +4,7 @@ namespace edce {
 
 SignatureShardApiServer::SignatureShardApiServer()
     : ps()
-    , signature_shard_listener(ps, xdr::tcp_listen(SIGNATURE_SHARD_PORT, AF_INET), false, xdr::session_allocator<void>()) {
+    , signature_shard_listener(ps, xdr::tcp_listen(SIGNATURE_SHARD_PORT, AF_INET), false, xdr::session_allocator<ip_address_type>()) {
         signature_shard_listener.register_service(signature_shard_server);
 
         ps.run();

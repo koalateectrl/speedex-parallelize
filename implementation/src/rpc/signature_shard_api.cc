@@ -29,7 +29,7 @@ namespace edce {
 // rpc
 
 std::unique_ptr<unsigned int> 
-SignatureShardV1_server::init_shard(const SerializedAccountIDWithPK& account_with_pk, 
+SignatureShardV1_server::init_shard(ip_address_type * ip_addr, const SerializedAccountIDWithPK& account_with_pk, 
     const ExperimentParameters& params, uint16_t ip_idx, uint16_t checker_begin_idx, uint16_t checker_end_idx,
     uint16_t num_assets, uint8_t tax_rate, uint8_t smooth_mult) {
 
@@ -53,7 +53,7 @@ SignatureShardV1_server::init_shard(const SerializedAccountIDWithPK& account_wit
 
 
 std::unique_ptr<unsigned int>
-SignatureShardV1_server::check_block(const SerializedBlockWithPK& block_with_pk, 
+SignatureShardV1_server::check_block(ip_address_type* ip_addr, const SerializedBlockWithPK& block_with_pk, 
   const uint64_t& num_threads) {
     auto timestamp = init_time_measurement();
 

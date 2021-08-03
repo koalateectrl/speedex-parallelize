@@ -4,8 +4,8 @@
 
 cd /users/samwwong
 
-git clone https://github.com/sandymule/xdrpp-hello-world
+git clone https://github.com/sandymule/speedex-parallelize
 
-cd /users/samwwong/xdrpp-hello-world/cloudlab_init_scripts/
+cd /users/samwwong/speedex-parallelize/cloudlab_init_scripts/
 
 sudo bash ./init.sh

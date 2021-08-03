@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd /users/samwwong/xdrpp-hello-world/implementation
+cd /users/samwwong/speedex-parallelize/implementation
 
 sudo ./autogen.sh
 
@@ -8,7 +8,7 @@ sudo ./configure
 
 sudo make || true
 
-cd /users/samwwong/xdrpp-hello-world
+cd /users/samwwong/speedex-parallelize
 
 sudo chmod 777 -R .
 
@@ -26,6 +26,6 @@ sudo make signature_shard_controller
 
 sudo make signature_check_server_main
 
-cd /users/samwwong/xdrpp-hello-world/
+cd /users/samwwong/speedex-parallelize/
 
 chmod 777 -R .

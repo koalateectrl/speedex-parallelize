@@ -38,7 +38,7 @@ template<> struct xdr_traits<rpc_success_hdr> : xdr_traits_base {
     return fixed_size;
   }
   template<typename Archive> static void save(Archive &a,
-					      const rpc_success_hdr &t) {
+                const rpc_success_hdr &t) {
     archive(a, t.xid, "xid");
     archive(a, REPLY, "mtype");
     archive(a, MSG_ACCEPTED, "stat");
@@ -128,12 +128,12 @@ struct dispatch_session_helper<P, C, T, indices<I...>> {
     dispatch(C &&c, S *s, T &&t, Rest &&...rest) ->
     typename std::enable_if<!std::is_same<S, void>::value,
       decltype(P::dispatch(std::forward<C>(c), s,
-			   std::get<I>(std::forward<T>(t))...,
-			   std::forward<Rest>(rest)...))>::type
+         std::get<I>(std::forward<T>(t))...,
+         std::forward<Rest>(rest)...))>::type
   {
     return P::dispatch(std::forward<C>(c), s,
-		       std::get<I>(std::forward<T>(t))...,
-		       std::forward<Rest>(rest)...);
+           std::get<I>(std::forward<T>(t))...,
+           std::forward<Rest>(rest)...);
   }
 
   // If the previous one fails SFINAE, try omitting the session
@@ -141,10 +141,10 @@ struct dispatch_session_helper<P, C, T, indices<I...>> {
   template<typename...Rest> static auto
     dispatch(C &&c, void *, T &&t, Rest &&...rest) ->
     decltype(P::dispatch(std::forward<C>(c), std::get<I>(std::forward<T>(t))...,
-			 std::forward<Rest>(rest)...))
+       std::forward<Rest>(rest)...))
   {
     return P::dispatch(std::forward<C>(c), std::get<I>(std::forward<T>(t))...,
-		       std::forward<Rest>(rest)...);
+           std::forward<Rest>(rest)...);
   }
 };
 }
@@ -161,14 +161,14 @@ struct dispatch_session_helper<P, C, T, indices<I...>> {
 //!   P::dispatch(c, 1, 2, 3, 4);
 //! \endcode
 template<typename P, typename C, typename S, typename T,
-	 typename...Rest> inline auto
+   typename...Rest> inline auto
 dispatch_with_session(C &&c, S *s, T &&t, Rest &&...rest) ->
   decltype(detail::dispatch_session_helper<P, C, T>::dispatch(
                c, s, std::forward<T>(t), std::forward<Rest>(rest)...))
 {
   return detail::dispatch_session_helper<P, C, T>::dispatch(
              std::forward<C>(c), s, std::forward<T>(t),
-	     std::forward<Rest>(rest)...);
+       std::forward<Rest>(rest)...);
 }
 
 
@@ -176,7 +176,7 @@ dispatch_with_session(C &&c, S *s, T &&t, Rest &&...rest) ->
 template<typename S> struct session_allocator {
   constexpr session_allocator() {}
   S *allocate(rpc_sock *s) { return new S{s}; }
-  void deallocate(S *session) { delete session; }
+  void deallocate(void *session) { delete static_cast<S*>(session); }
 };
 template<> struct session_allocator<void> {
   constexpr session_allocator() {}
@@ -216,7 +216,7 @@ struct service_base {
 
 class rpc_server_base {
   std::map<uint32_t,
-	   std::map<uint32_t, std::unique_ptr<service_base>>> servers_;
+     std::map<uint32_t, std::unique_ptr<service_base>>> servers_;
 protected:
   void register_service_base(service_base *s);
 public:
@@ -235,7 +235,7 @@ protected:
   unique_sock listen_sock_;
   const bool use_rpcbind_;
   rpc_tcp_listener_common(pollset &ps, unique_sock &&s,
-			  bool use_rpcbind = false);
+        bool use_rpcbind = false);
   rpc_tcp_listener_common(pollset &ps)
     : rpc_tcp_listener_common(ps, unique_sock(invalid_sock), true) {}
   virtual ~rpc_tcp_listener_common();
@@ -247,7 +247,7 @@ public:
 };
 
 template<template<typename, typename, typename> class ServiceType,
-	 typename Session, typename SessionAllocator>
+   typename Session, typename SessionAllocator>
 class generic_rpc_tcp_listener : public rpc_tcp_listener_common {
   SessionAllocator sa_;
 protected:
@@ -260,7 +260,7 @@ public:
   generic_rpc_tcp_listener(pollset &ps)
     : rpc_tcp_listener_common(ps) {}
   generic_rpc_tcp_listener(pollset &ps, unique_sock &&s, bool use_rpcbind,
-			   SessionAllocator sa)
+         SessionAllocator sa)
     : rpc_tcp_listener_common(ps, std::move(s), use_rpcbind), sa_(sa) {}
   ~generic_rpc_tcp_listener() {}
 
@@ -270,7 +270,7 @@ public:
     register_service_base(new ServiceType<T,Session,Interface>(t));
     if(use_rpcbind_)
       rpcbind_register(listen_sock_.get(), Interface::program,
-		       Interface::version);
+           Interface::version);
   }
 };
 

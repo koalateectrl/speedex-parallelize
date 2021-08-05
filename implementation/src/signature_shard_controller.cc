@@ -229,8 +229,7 @@ int main(int argc, char const *argv[]) {
     std::cout << "Checked " << tx_list.size() << " signatures in " << sig_res << std::endl;
 
     std::cout << "Finished entire process in " << res << 
-    " with " << num_shards << " shards, with each worker with max " << num_threads << " threads, and " <<
-    total_machines << " total machines" << std::endl;
+    " with " << num_shards << " shards, with each worker with max " << num_threads << " threads." << std::endl;
 
     return 0;
 

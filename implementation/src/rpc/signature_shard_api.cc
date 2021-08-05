@@ -101,6 +101,28 @@ SignatureShardV1_server::check_block(rpcsockptr* ip_addr, const SerializedBlockW
 
 }
 
+std::unique_ptr<unsigned int>
+SignatureShardV1_server::init_checker(rpcsockptr* ip_addr)
+{
+    int fd = ip_addr->sock_ptr->ms_->get_sock().fd();
+
+    struct sockaddr sa;
+    socklen_t sval;
+    sval = sizeof(sa);
+
+    getpeername(fd, (struct sockaddr *)&sa, &sval);
+    struct sockaddr_in *addr_in = (struct sockaddr_in *)&sa;
+    char *ip = inet_ntoa(addr_in->sin_addr);
+
+    signature_checker_ips.insert(std::string(ip));
+
+    std::cout << ip << std::endl;
+
+    return std::make_unique<unsigned int>(0);
+
+}
+
+
 // not rpc 
 SignatureShardV1_server::SignatureShardV1_server()
     : _management_structures(EdceManagementStructures{20, ApproximationParameters{.tax_rate = 10, .smooth_mult = 10}}) {}
@@ -157,48 +179,7 @@ SignatureShardV1_server::poll_node(int idx, const SerializedBlockWithPK& block_w
     return return_value;
 }
 
-std::unique_ptr<unsigned int>
-SignatureShardV1_server::init_ping_shard(rpcsockptr* ip_addr)
-{
-    int fd = ip_addr->sock_ptr->ms_->get_sock().fd();
 
-    struct sockaddr sa;
-    socklen_t sval;
-    sval = sizeof(sa);
-
-    getpeername(fd, (struct sockaddr *)&sa, &sval);
-    struct sockaddr_in *addr_in = (struct sockaddr_in *)&sa;
-    char *ip = inet_ntoa(addr_in->sin_addr);
-
-    signature_checker_ips.insert(std::string(ip));
-
-    std::cout << ip << std::endl;
-
-    return std::make_unique<unsigned int>(0);
-
-}
-
-/*
-std::unique_ptr<unsigned int>
-SignatureCheckerConnectV1_server::init_ping_shard(rpcsockptr* ip_addr)
-{
-    int fd = ip_addr->sock_ptr->ms_->get_sock().fd();
-
-    struct sockaddr sa;
-    socklen_t sval;
-    sval = sizeof(sa);
-
-    getpeername(fd, (struct sockaddr *)&sa, &sval);
-    struct sockaddr_in *addr_in = (struct sockaddr_in *)&sa;
-    char *ip = inet_ntoa(addr_in->sin_addr);
-
-    signature_checker_ips.insert(std::string(ip));
-
-    std::cout << ip << std::endl;
-
-    return std::make_unique<unsigned int>(0);
-
-}*/
 
 
 }

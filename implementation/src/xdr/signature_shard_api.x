@@ -31,15 +31,8 @@ program SignatureShard {
     version SignatureShardV1 {
         uint32 init_shard(SerializedAccountIDWithPK, ExperimentParameters, uint32, uint32, uint32, uint32, uint32, uint32) = 1;
         uint32 check_block(SerializedBlockWithPK, uint64) = 2;
-        uint32 init_ping_shard(void) = 3;
+        uint32 init_checker(void) = 3;
     } = 1;
 } = 0x11111117;
 
-/*
-program SignatureCheckerConnect {
-    version SignatureCheckerConnectV1 {
-        uint32 init_ping_shard(void) = 1;
-    } = 1;
-} = 0x11111118;
-*/
 }

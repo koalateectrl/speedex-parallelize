@@ -33,6 +33,8 @@ public:
     std::unique_ptr<unsigned int> check_block(rpcsockptr* ip_addr, const SerializedBlockWithPK& block_with_pk, 
         const uint64& num_threads);
 
+    std::unique_ptr<unsigned int> init_checker(rpcsockptr* ip_addr);
+    
     // not rpc
 
     std::string hostname_from_idx(int idx);
@@ -46,20 +48,8 @@ public:
     uint32_t poll_node(int idx, const SerializedBlockWithPK& block_with_pk, 
         const uint64_t& num_threads);
 
-    std::unique_ptr<unsigned int> init_ping_shard(rpcsockptr* ip_addr);
+    
 
 };
-
-/*
-class SignatureCheckerConnectV1_server {
-    std::set<std::string> signature_checker_ips;
-
-public:
-    using rpc_interface_type = SignatureCheckerConnectV1;
-
-    SignatureCheckerConnectV1_server() {};
-
-    std::unique_ptr<unsigned int> init_ping_shard(rpcsockptr* ip_addr);
-};*/
 
 }

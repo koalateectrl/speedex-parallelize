@@ -28,7 +28,7 @@ public:
 
     SignatureCheckApiServer(std::string shard_ip);
 
-    void init_ping_shard(std::string ip_of_shard);
+    void init_checker(std::string ip_of_shard);
 
 };
 

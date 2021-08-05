@@ -22,8 +22,9 @@ int main(int argc, char const *argv[]) {
     }
 
     if (argc == 3) {
+        std::string shard_ip = argv[2];
         if (is_shard == 0) {
-            SignatureCheckApiServer signature_check_server;
+            SignatureCheckApiServer signature_check_server {shard_ip};
         } else {
             throw std::runtime_error("The is_shard argument must be 0 to use 3 params!!!");
         }

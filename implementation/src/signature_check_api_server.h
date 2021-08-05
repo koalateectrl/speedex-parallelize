@@ -22,11 +22,13 @@ class SignatureCheckApiServer {
 
     xdr::srpc_tcp_listener<> signature_check_listener;
 
+    std::string ip_of_shard;
+
 public:
 
     SignatureCheckApiServer();
 
-    void init_ping_shard();
+    void init_ping_shard(std::string ip_of_shard);
 
 };
 

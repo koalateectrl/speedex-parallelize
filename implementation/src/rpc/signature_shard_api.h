@@ -50,7 +50,7 @@ public:
 
 };
 
-
+/*
 class SignatureCheckerConnectV1_server {
     std::set<std::string> signature_checker_ips;
 
@@ -60,6 +60,6 @@ public:
     SignatureCheckerConnectV1_server() {};
 
     std::unique_ptr<unsigned int> init_ping_shard(rpcsockptr* ip_addr);
-};
+};*/
 
 }

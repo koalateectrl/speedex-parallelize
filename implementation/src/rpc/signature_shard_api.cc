@@ -178,6 +178,7 @@ SignatureShardV1_server::init_ping_shard(rpcsockptr* ip_addr)
 
 }
 
+/*
 std::unique_ptr<unsigned int>
 SignatureCheckerConnectV1_server::init_ping_shard(rpcsockptr* ip_addr)
 {
@@ -197,7 +198,7 @@ SignatureCheckerConnectV1_server::init_ping_shard(rpcsockptr* ip_addr)
 
     return std::make_unique<unsigned int>(0);
 
-}
+}*/
 
 
 }

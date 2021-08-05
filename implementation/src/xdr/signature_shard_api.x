@@ -35,11 +35,11 @@ program SignatureShard {
     } = 1;
 } = 0x11111117;
 
-
+/*
 program SignatureCheckerConnect {
     version SignatureCheckerConnectV1 {
         uint32 init_ping_shard(void) = 1;
     } = 1;
 } = 0x11111118;
-
+*/
 }

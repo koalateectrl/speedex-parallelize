@@ -158,7 +158,7 @@ SignatureShardV1_server::poll_node(int idx, const SerializedBlockWithPK& block_w
 }
 
 
-uint32_t
+std::unique_ptr<unsigned int>
 SignatureCheckerConnectV1_server::init_ping_shard(rpcsockptr* ip_addr)
 {
     int fd = ip_addr->sock_ptr->ms_->get_sock().fd();
@@ -175,7 +175,7 @@ SignatureCheckerConnectV1_server::init_ping_shard(rpcsockptr* ip_addr)
 
     std::cout << ip << std::endl;
 
-    return 0;
+    return std::make_unique<unsigned int>(0);
 
 }
 

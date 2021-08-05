@@ -56,7 +56,7 @@ public:
 
     SignatureCheckerConnectV1_server() {};
 
-    uint32_t init_ping_shard(rpcsockptr* ip_addr);
+    std::unique_ptr<unsigned int> init_ping_shard(rpcsockptr* ip_addr);
 };
 
 }

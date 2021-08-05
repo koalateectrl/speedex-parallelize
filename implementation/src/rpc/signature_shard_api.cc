@@ -24,14 +24,12 @@
 #include <cstring>
 #include <iostream>
 
-#include "connection_info.h"
-
 namespace edce {
 
 // rpc
 
 std::unique_ptr<unsigned int> 
-SignatureShardV1_server::init_shard(ip_address_type* ip_addr, const SerializedAccountIDWithPK& account_with_pk, 
+SignatureShardV1_server::init_shard(ip_address_type * ip_addr, const SerializedAccountIDWithPK& account_with_pk, 
     const ExperimentParameters& params, uint16_t ip_idx, uint16_t checker_begin_idx, uint16_t checker_end_idx,
     uint16_t num_assets, uint8_t tax_rate, uint8_t smooth_mult) {
 
@@ -201,12 +199,5 @@ SignatureShardV1_server::print_local_ip() {
     }
     return 0;
 }
-
-
-void
-SignatureCheckerConnectV1_server::hello_world() {
-    std::cout << "Hello World" << std::endl;
-}
-
 
 }

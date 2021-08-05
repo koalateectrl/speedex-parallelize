@@ -6,9 +6,11 @@
 #include "xdr/signature_shard_api.h"
 #include "edce_node.h"
 
-#include "connection_info.h"
-
 namespace edce {
+
+struct ip_address_type {
+    xdr::rpc_sock* sock_ptr;
+};
 
 class SignatureShardV1_server {
     int _ip_idx;
@@ -45,17 +47,6 @@ public:
 
     uint32_t print_local_ip();
 
-};
-
-
-class SignatureCheckerConnectV1_server {
-
-public:
-    using rpc_interface_type = SignatureCheckerConnectV1;
-
-    SignatureCheckerConnectV1_server();
-
-    void hello_world();
 };
 
 }

@@ -9,8 +9,6 @@
 #include <xdrpp/srpc.h>
 #include <xdrpp/pollset.h>
 
-#include "connection_info.h"
-
 
 namespace edce {
 
@@ -22,7 +20,7 @@ class SignatureCheckApiServer {
 
     xdr::pollset ps;
 
-    xdr::srpc_tcp_listener<ip_address_type> signature_check_listener;
+    xdr::srpc_tcp_listener<> signature_check_listener;
 
 public:
 

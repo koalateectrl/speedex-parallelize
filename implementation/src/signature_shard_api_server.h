@@ -9,6 +9,8 @@
 #include <xdrpp/srpc.h>
 #include <xdrpp/pollset.h>
 
+#include "connection_info.h"
+
 
 namespace edce {
 

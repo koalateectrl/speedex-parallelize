@@ -5,12 +5,10 @@
 
 #include "xdr/signature_shard_api.h"
 #include "edce_node.h"
+#include "connection_info.h"
+
 
 namespace edce {
-
-struct ip_address_type {
-    xdr::rpc_sock* sock_ptr;
-};
 
 class SignatureShardV1_server {
     int _ip_idx;

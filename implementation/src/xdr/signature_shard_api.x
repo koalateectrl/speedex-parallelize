@@ -34,4 +34,11 @@ program SignatureShard {
     } = 1;
 } = 0x11111117;
 
+
+program SignatureCheckerConnect {
+    version SignatureCheckerConnectV1 {
+        void hello_world(void) = 1;
+    } = 1;
+} = 0x11111118;
+
 }

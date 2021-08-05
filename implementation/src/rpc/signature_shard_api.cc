@@ -200,4 +200,12 @@ SignatureShardV1_server::print_local_ip() {
     return 0;
 }
 
+
+void
+SignatureCheckerConnectV1_server::hello_world()
+{
+    std::cout << "Hello World" << std::endl;
+}
+
+
 }

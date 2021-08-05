@@ -24,8 +24,8 @@ class SignatureShardApiServer {
 
     xdr::pollset ps;
 
-    xdr::srpc_tcp_listener<ip_address_type> signature_shard_listener;
-    xdr::srpc_tcp_listener<> signature_checker_connect_listener;
+    xdr::srpc_tcp_listener<> signature_shard_listener;
+    xdr::srpc_tcp_listener<ip_address_type> signature_checker_connect_listener;
 
 public:
 

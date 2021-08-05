@@ -53,7 +53,7 @@ class SignatureCheckerConnectV1_server {
 public:
     using rpc_interface_type = SignatureCheckerConnectV1;
 
-    SignatureCheckerConnectV1_server();
+    SignatureCheckerConnectV1_server() {};
 
     void hello_world();
 };

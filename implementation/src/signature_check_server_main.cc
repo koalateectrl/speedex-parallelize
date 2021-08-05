@@ -6,7 +6,7 @@ using namespace edce;
 
 int main(int argc, char const *argv[]) {
 
-    if (argc != (2 || 3)) {
+    if ((argc != 2) && (argc != 3)) {
         std::printf("usage: ./signature_check_server_main is_shard shard_ip(if sig_checker)\n");
         return 0;
     }

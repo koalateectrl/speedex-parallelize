@@ -26,6 +26,8 @@ public:
 
     SignatureCheckApiServer();
 
+    init_ping_shard();
+
 };
 
 } /* edce */

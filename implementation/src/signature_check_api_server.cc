@@ -6,13 +6,17 @@ SignatureCheckApiServer::SignatureCheckApiServer()
     : ps()
     , signature_check_listener(ps, xdr::tcp_listen(SIGNATURE_CHECK_PORT, AF_INET), false, xdr::session_allocator<void>()) {
         signature_check_listener.register_service(signature_check_server);
-
+        init_ping_shard();
         ps.run();
         //std::thread th([this] {ps.run();});
         //th.detach();
     }
 
-
+void
+SignatureCheckApiServer::init_ping_shard()
+{
+    std::cout << "stuff" << std::endl;
+}
 /*
 
 void

@@ -169,7 +169,7 @@ void SignatureShardV1_server::split_transaction_block(const SignedTransactionWit
 }
 
 uint32_t
-SignatureShardV1_server::poll_node(std::string ip_addr, const SerializedBlockWithPK& block_with_pk, 
+SignatureShardV1_server::poll_node(const std::string& ip_addr, const SerializedBlockWithPK& block_with_pk, 
     const uint64_t& num_threads) {
 
     auto fd = xdr::tcp_connect(ip_addr.c_str(), SIGNATURE_CHECK_PORT);

@@ -41,7 +41,7 @@ public:
     void split_transaction_block(const SignedTransactionWithPKList& orig_vec, 
         const size_t num_child_machines, std::vector<SignedTransactionWithPKList>& split_vec);
 
-    uint32_t poll_node(int idx, const SerializedBlockWithPK& block_with_pk, 
+    uint32_t poll_node(const std::string& ip_addr, const SerializedBlockWithPK& block_with_pk, 
         const uint64_t& num_threads);
 
     

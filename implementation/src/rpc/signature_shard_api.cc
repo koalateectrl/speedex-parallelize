@@ -30,12 +30,10 @@ namespace edce {
 
 std::unique_ptr<unsigned int> 
 SignatureShardV1_server::init_shard(rpcsockptr* ip_addr, const SerializedAccountIDWithPK& account_with_pk, 
-    const ExperimentParameters& params, uint16_t ip_idx, uint16_t checker_begin_idx, uint16_t checker_end_idx,
+    const ExperimentParameters& params, uint16_t ip_idx,
     uint16_t num_assets, uint8_t tax_rate, uint8_t smooth_mult) {
 
     _ip_idx = ip_idx;
-    _checker_begin_idx = checker_begin_idx;
-    _checker_end_idx = checker_end_idx;
 
     AccountIDWithPKList account_with_pk_list;
     xdr::xdr_from_opaque(account_with_pk, account_with_pk_list);
@@ -74,21 +72,23 @@ SignatureShardV1_server::check_block(rpcsockptr* ip_addr, const SerializedBlockW
     float filter_res = measure_time(filter_timestamp);
     std::cout << "Filtered signatures in " << filter_res << std::endl;
 
-    size_t num_child_machines = _checker_end_idx - _checker_begin_idx;
-    size_t checker_begin_idx = _checker_begin_idx;
+    std::vector<std::string> signature_checker_ips_vec;
 
+    signature_checker_ips_vec.insert(signature_checker_ips_vec.end(), signature_checker_ips.begin(), 
+        signature_checker_ips.end());
+    
     std::vector<SignedTransactionWithPKList> tx_with_pk_split_list;
 
-    split_transaction_block(filtered_tx_with_pk_list, num_child_machines, tx_with_pk_split_list);
+    split_transaction_block(filtered_tx_with_pk_list, signature_checker_ips.size(), tx_with_pk_split_list);
 
     size_t num_threads_lambda = num_threads;
 
     tbb::parallel_for(
-        tbb::blocked_range<size_t>(0, num_child_machines),
+        tbb::blocked_range<size_t>(0, signature_checker_ips_vec.size()),
         [&](auto r) {
             for (size_t i = r.begin(); i != r.end(); i++) {
                 SerializedBlockWithPK serialized_block_with_pk = xdr::xdr_to_opaque(tx_with_pk_split_list[i]);
-                if (poll_node(checker_begin_idx + i, serialized_block_with_pk, num_threads_lambda) == 1) {
+                if (poll_node(signature_checker_ips_vec[i], serialized_block_with_pk, num_threads_lambda) == 1) {
                     throw std::runtime_error("sig checking failed!!!");
                 }
             }
@@ -169,10 +169,10 @@ void SignatureShardV1_server::split_transaction_block(const SignedTransactionWit
 }
 
 uint32_t
-SignatureShardV1_server::poll_node(int idx, const SerializedBlockWithPK& block_with_pk, 
+SignatureShardV1_server::poll_node(std::string ip_addr, const SerializedBlockWithPK& block_with_pk, 
     const uint64_t& num_threads) {
 
-    auto fd = xdr::tcp_connect(hostname_from_idx(idx).c_str(), SIGNATURE_CHECK_PORT);
+    auto fd = xdr::tcp_connect(ip_addr.c_str(), SIGNATURE_CHECK_PORT);
     auto client = xdr::srpc_client<SignatureCheckV1>(fd.get());
 
     uint32_t return_value = *client.check_all_signatures(block_with_pk, num_threads);

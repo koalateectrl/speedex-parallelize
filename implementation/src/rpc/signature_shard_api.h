@@ -14,8 +14,6 @@ namespace edce {
 
 class SignatureShardV1_server {
     int _ip_idx;
-    int _checker_begin_idx;
-    int _checker_end_idx;
     EdceManagementStructures _management_structures;
     std::set<std::string> signature_checker_ips;
 
@@ -26,15 +24,13 @@ public:
 
     std::unique_ptr<unsigned int> init_shard(rpcsockptr* ip_addr, const SerializedAccountIDWithPK& account_with_pk, 
         const ExperimentParameters& params, uint16_t ip_idx,
-        uint16_t checker_begin_idx, 
-        uint16_t checker_end_idx,
         uint16_t num_assets, uint8_t tax_rate, uint8_t smooth_mult);
 
     std::unique_ptr<unsigned int> check_block(rpcsockptr* ip_addr, const SerializedBlockWithPK& block_with_pk, 
         const uint64& num_threads);
 
     std::unique_ptr<unsigned int> init_checker(rpcsockptr* ip_addr);
-    
+
     // not rpc
 
     std::string hostname_from_idx(int idx);

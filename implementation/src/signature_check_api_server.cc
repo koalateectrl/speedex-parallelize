@@ -22,7 +22,7 @@ SignatureCheckApiServer::init_ping_shard()
     auto client = xdr::srpc_client<SignatureCheckerConnectV1>(fd.get());
 
     if (*client.init_ping_shard() != 0) {
-        throw std::runtime_error("Initial Pinging shard failed!!!")
+        throw std::runtime_error("Initial Pinging shard failed!!!");
     }
 }
 

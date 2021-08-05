@@ -43,19 +43,18 @@ public:
     uint32_t poll_node(int idx, const SerializedBlockWithPK& block_with_pk, 
         const uint64_t& num_threads);
 
-    uint32_t print_local_ip();
-
 };
 
 
 class SignatureCheckerConnectV1_server {
+    std::vector<std::string> signature_checker_ips;
 
 public:
     using rpc_interface_type = SignatureCheckerConnectV1;
 
     SignatureCheckerConnectV1_server() {};
 
-    void hello_world(ip_address_type* ip_addr);
+    void init_ping_shard(rpcsockptr* ip_addr);
 };
 
 }

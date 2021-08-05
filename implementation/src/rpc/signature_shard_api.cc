@@ -150,8 +150,6 @@ uint32_t
 SignatureShardV1_server::poll_node(int idx, const SerializedBlockWithPK& block_with_pk, 
     const uint64_t& num_threads) {
 
-    print_local_ip();
-    
     auto fd = xdr::tcp_connect(hostname_from_idx(idx).c_str(), SIGNATURE_CHECK_PORT);
     auto client = xdr::srpc_client<SignatureCheckV1>(fd.get());
 
@@ -160,69 +158,20 @@ SignatureShardV1_server::poll_node(int idx, const SerializedBlockWithPK& block_w
 }
 
 
-uint32_t
-SignatureShardV1_server::print_local_ip() {
-    int sock = socket(PF_INET, SOCK_DGRAM, 0);
-    sockaddr_in loopback;
-
-    if (sock == -1) {
-        std::cerr << "Could not socket\n";
-        return 1;
-    }
-
-    std::memset(&loopback, 0, sizeof(loopback));
-    loopback.sin_family = AF_INET;
-    loopback.sin_addr.s_addr = 1337;   // can be any IP address
-    loopback.sin_port = htons(9);      // using debug port
-
-    if (connect(sock, reinterpret_cast<sockaddr*>(&loopback), sizeof(loopback)) == -1) {
-        close(sock);
-        std::cerr << "Could not connect\n";
-        return 1;
-    }
-
-    socklen_t addrlen = sizeof(loopback);
-    if (getsockname(sock, reinterpret_cast<sockaddr*>(&loopback), &addrlen) == -1) {
-        close(sock);
-        std::cerr << "Could not getsockname\n";
-        return 1;
-    }
-
-    close(sock);
-
-    char buf[INET_ADDRSTRLEN];
-    if (inet_ntop(AF_INET, &loopback.sin_addr, buf, INET_ADDRSTRLEN) == 0x0) {
-        std::cerr << "Could not inet_ntop\n";
-        return 1;
-    } else {
-        std::cout << "Local ip address: " << buf << "\n";
-    }
-    return 0;
-}
-
-
 void
-SignatureCheckerConnectV1_server::hello_world(ip_address_type* ip_addr)
+SignatureCheckerConnectV1_server::init_ping_shard(rpcsockptr* ip_addr)
 {
-    std::cout << "Hello World" << std::endl;
-    if (ip_addr != nullptr) {
-        std::cout << "NOT NULL" << std::endl;
-    }
-
-    std::cout << ip_addr << std::endl;
-
     int fd = ip_addr->sock_ptr->ms_->get_sock().fd();
-    std::cout << fd << std::endl;
 
     struct sockaddr sa;
     socklen_t sval;
     sval = sizeof(sa);
 
     getpeername(fd, (struct sockaddr *)&sa, &sval);
-
     struct sockaddr_in *addr_in = (struct sockaddr_in *)&sa;
-
     char *ip = inet_ntoa(addr_in->sin_addr);
+
+    signature_checker_ips.push_back(std::string(ip));
 
     std::cout << ip << std::endl;
 

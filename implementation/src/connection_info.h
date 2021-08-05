@@ -5,7 +5,7 @@
 
 namespace edce {
 
-struct ip_address_type {
+struct rpcsockptr {
     xdr::rpc_sock* sock_ptr;
 };
 

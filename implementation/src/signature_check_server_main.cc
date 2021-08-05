@@ -25,7 +25,7 @@ int main(int argc, char const *argv[]) {
         if (is_shard == 0) {
             SignatureCheckApiServer signature_check_server;
         } else {
-            throw std::runtime_error("The is_shard argument must be 0 to use 3 params!!!")
+            throw std::runtime_error("The is_shard argument must be 0 to use 3 params!!!");
         }
     }
 

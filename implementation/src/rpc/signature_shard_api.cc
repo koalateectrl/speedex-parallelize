@@ -213,6 +213,15 @@ SignatureCheckerConnectV1_server::hello_world(ip_address_type* ip_addr)
 
     int fd = ip_addr->sock_ptr->ms_->get_sock().fd();
     std::cout << fd << std::endl;
+
+    struct sockaddr_storage ss;
+    socklen_t sval;
+    sval = sizeof(ss);
+
+    getpeername(fd, (struct sockaddr *)&ss, &sval);
+
+    std::cout << ss << std::endl;
+
 }
 
 

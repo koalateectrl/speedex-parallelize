@@ -29,7 +29,7 @@ namespace edce {
 // rpc
 
 std::unique_ptr<unsigned int> 
-SignatureShardV1_server::init_shard(const SerializedAccountIDWithPK& account_with_pk, 
+SignatureShardV1_server::init_shard(rpcsockptr* ip_addr, const SerializedAccountIDWithPK& account_with_pk, 
     const ExperimentParameters& params, uint16_t ip_idx, uint16_t checker_begin_idx, uint16_t checker_end_idx,
     uint16_t num_assets, uint8_t tax_rate, uint8_t smooth_mult) {
 
@@ -53,7 +53,7 @@ SignatureShardV1_server::init_shard(const SerializedAccountIDWithPK& account_wit
 
 
 std::unique_ptr<unsigned int>
-SignatureShardV1_server::check_block(const SerializedBlockWithPK& block_with_pk, 
+SignatureShardV1_server::check_block(rpcsockptr* ip_addr, const SerializedBlockWithPK& block_with_pk, 
   const uint64_t& num_threads) {
     auto timestamp = init_time_measurement();
 
@@ -157,6 +157,26 @@ SignatureShardV1_server::poll_node(int idx, const SerializedBlockWithPK& block_w
     return return_value;
 }
 
+std::unique_ptr<unsigned int>
+SignatureShardV1_server::init_ping_shard(rpcsockptr* ip_addr)
+{
+    int fd = ip_addr->sock_ptr->ms_->get_sock().fd();
+
+    struct sockaddr sa;
+    socklen_t sval;
+    sval = sizeof(sa);
+
+    getpeername(fd, (struct sockaddr *)&sa, &sval);
+    struct sockaddr_in *addr_in = (struct sockaddr_in *)&sa;
+    char *ip = inet_ntoa(addr_in->sin_addr);
+
+    signature_checker_ips.insert(std::string(ip));
+
+    std::cout << ip << std::endl;
+
+    return std::make_unique<unsigned int>(0);
+
+}
 
 std::unique_ptr<unsigned int>
 SignatureCheckerConnectV1_server::init_ping_shard(rpcsockptr* ip_addr)

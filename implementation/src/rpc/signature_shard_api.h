@@ -17,19 +17,20 @@ class SignatureShardV1_server {
     int _checker_begin_idx;
     int _checker_end_idx;
     EdceManagementStructures _management_structures;
+    std::set<std::string> signature_checker_ips;
 
 public:
     using rpc_interface_type = SignatureShardV1;
 
     SignatureShardV1_server();
 
-    std::unique_ptr<unsigned int> init_shard(const SerializedAccountIDWithPK& account_with_pk, 
+    std::unique_ptr<unsigned int> init_shard(rpcsockptr* ip_addr, const SerializedAccountIDWithPK& account_with_pk, 
         const ExperimentParameters& params, uint16_t ip_idx,
         uint16_t checker_begin_idx, 
         uint16_t checker_end_idx,
         uint16_t num_assets, uint8_t tax_rate, uint8_t smooth_mult);
 
-    std::unique_ptr<unsigned int> check_block(const SerializedBlockWithPK& block_with_pk, 
+    std::unique_ptr<unsigned int> check_block(rpcsockptr* ip_addr, const SerializedBlockWithPK& block_with_pk, 
         const uint64& num_threads);
 
     // not rpc
@@ -44,6 +45,8 @@ public:
 
     uint32_t poll_node(int idx, const SerializedBlockWithPK& block_with_pk, 
         const uint64_t& num_threads);
+
+    std::unique_ptr<unsigned int> init_ping_shard(rpcsockptr* ip_addr);
 
 };
 

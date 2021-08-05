@@ -7,6 +7,8 @@
 #include "edce_node.h"
 #include "connection_info.h"
 
+#include <set>
+
 
 namespace edce {
 
@@ -47,14 +49,14 @@ public:
 
 
 class SignatureCheckerConnectV1_server {
-    std::vector<std::string> signature_checker_ips;
+    std::set<std::string> signature_checker_ips;
 
 public:
     using rpc_interface_type = SignatureCheckerConnectV1;
 
     SignatureCheckerConnectV1_server() {};
 
-    void init_ping_shard(rpcsockptr* ip_addr);
+    uint32_t init_ping_shard(rpcsockptr* ip_addr);
 };
 
 }

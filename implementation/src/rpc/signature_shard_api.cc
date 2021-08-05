@@ -158,7 +158,7 @@ SignatureShardV1_server::poll_node(int idx, const SerializedBlockWithPK& block_w
 }
 
 
-void
+uint32_t
 SignatureCheckerConnectV1_server::init_ping_shard(rpcsockptr* ip_addr)
 {
     int fd = ip_addr->sock_ptr->ms_->get_sock().fd();
@@ -171,9 +171,11 @@ SignatureCheckerConnectV1_server::init_ping_shard(rpcsockptr* ip_addr)
     struct sockaddr_in *addr_in = (struct sockaddr_in *)&sa;
     char *ip = inet_ntoa(addr_in->sin_addr);
 
-    signature_checker_ips.push_back(std::string(ip));
+    signature_checker_ips.insert(std::string(ip));
 
     std::cout << ip << std::endl;
+
+    return 0;
 
 }
 

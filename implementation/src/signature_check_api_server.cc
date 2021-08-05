@@ -15,8 +15,17 @@ SignatureCheckApiServer::SignatureCheckApiServer()
 void
 SignatureCheckApiServer::init_ping_shard()
 {
+    int idx = 1;
+    std::string ip_addr = std::string("10.10.1.") + std::to_string(idx);
+    auto fd = xdr::tcp::connect(ip_addr.c_str(), SIGNATURE_CHECK_PORT);
+    auto client = xdr::srpc_client<SignatureCheckerConnectV1>(fd.get());
+
+    //client.hello_world();
+
     std::cout << "stuff" << std::endl;
 }
+
+
 /*
 
 void

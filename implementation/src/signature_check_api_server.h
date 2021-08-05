@@ -26,7 +26,7 @@ public:
 
     SignatureCheckApiServer();
 
-    init_ping_shard();
+    void init_ping_shard();
 
 };
 

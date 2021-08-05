@@ -21,7 +21,7 @@ SignatureCheckApiServer::init_ping_shard()
     auto fd = xdr::tcp_connect(ip_addr.c_str(), SIGNATURE_CHECK_PORT);
     auto client = xdr::srpc_client<SignatureCheckerConnectV1>(fd.get());
 
-    //client.hello_world();
+    client.hello_world();
 
     std::cout << "stuff" << std::endl;
 }

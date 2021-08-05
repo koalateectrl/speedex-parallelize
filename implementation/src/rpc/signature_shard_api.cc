@@ -208,6 +208,11 @@ SignatureCheckerConnectV1_server::hello_world(ip_address_type* ip_addr)
     if (ip_addr != nullptr) {
         std::cout << "NOT NULL" << std::endl;
     }
+
+    std::cout << ip_addr << std::endl;
+
+    int fd = ip_addr->sock_ptr->ms_->get_sock().fd();
+    std::cout << fd << std::endl;
 }
 
 

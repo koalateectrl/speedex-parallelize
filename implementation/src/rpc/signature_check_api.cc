@@ -49,4 +49,10 @@ SignatureCheckV1_server::check_all_signatures(const SerializedBlockWithPK& block
 
 }
 
+std::unique_ptr<unsigned int> 
+SignatureCheckV1_server::heartbeat() 
+{
+  return std::make_unique<unsigned int>(0);
+}
+
 }

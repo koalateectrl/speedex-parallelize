@@ -180,6 +180,22 @@ SignatureShardV1_server::poll_node(const std::string& ip_addr, const SerializedB
 }
 
 
+uint32_t
+SignatureShardV1_server::check_heartbeat(const std::string& ip_addr) {
+    try {
+        auto fd = xdr::tcp_connect(ip_addr.c_str(), SIGNATURE_CHECK_PORT);
+        auto client = xdr::srpc_client<SignatureCheckV1>(fd.get());
+        uint32_t return_value = *client.heartbeat();
+        std::cout << "ALIVE" << std::endl;
+        return return_value;
+    } catch (const std::system_error& e) {
+        std::cout << "DEAD" << std::endl;
+        signature_checker_ips.erase(ip_addr);
+        return 1;
+    }
+}
+
+
 
 
 }

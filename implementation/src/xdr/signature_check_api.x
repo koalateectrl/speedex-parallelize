@@ -30,6 +30,7 @@ namespace edce {
 program SignatureCheck {
     version SignatureCheckV1 {
         uint32 check_all_signatures(SerializedBlockWithPK, uint64) = 1;
+        uint32 heartbeat(void) = 2;
     } = 1;
 } = 0x11111116;
 

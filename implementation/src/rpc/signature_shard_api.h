@@ -44,7 +44,7 @@ public:
     uint32_t poll_node(const std::string& ip_addr, const SerializedBlockWithPK& block_with_pk, 
         const uint64_t& num_threads);
 
-    
+    uint32_t check_heartbeat(const std::string& ip_addr);
 
 };
 

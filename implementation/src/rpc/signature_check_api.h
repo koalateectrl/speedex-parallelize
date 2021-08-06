@@ -17,6 +17,8 @@ public:
 
   std::unique_ptr<unsigned int> check_all_signatures(const SerializedBlockWithPK& block_with_pk, 
     const uint64& num_threads);
+
+  std::unique_ptr<unsigned int> heartbeat();
 };
 
 }

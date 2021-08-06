@@ -72,6 +72,8 @@ SignatureShardV1_server::check_block(rpcsockptr* ip_addr, const SerializedBlockW
     float filter_res = measure_time(filter_timestamp);
     std::cout << "Filtered signatures in " << filter_res << std::endl;
 
+    update_checker_ips();
+
     std::vector<std::string> signature_checker_ips_vec;
 
     signature_checker_ips_vec.insert(signature_checker_ips_vec.end(), signature_checker_ips.begin(), 
@@ -193,6 +195,21 @@ SignatureShardV1_server::check_heartbeat(const std::string& ip_addr) {
         signature_checker_ips.erase(ip_addr);
         return 1;
     }
+}
+
+void
+SignatureShardV1_server::update_checker_ips() {
+    std::vector<std::string> signature_checker_ips_vec;
+    signature_checker_ips_vec.insert(signature_checker_ips_vec.end(), signature_checker_ips.begin(), 
+        signature_checker_ips.end());
+
+    tbb::parallel_for(
+        tbb::blocked_range<size_t>(0, signature_checker_ips_vec.size()),
+        [&signature_checker_ips_vec](auto r) {
+            for (size_t i = r.begin(); i < r.end(); i++) {
+                check_heartbeat(signature_checker_ips_vec[i]);
+            }
+        });
 }
 
 

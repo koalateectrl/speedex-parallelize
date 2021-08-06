@@ -46,6 +46,8 @@ public:
 
     uint32_t check_heartbeat(const std::string& ip_addr);
 
+    void update_checker_ips();
+
 };
 
 }

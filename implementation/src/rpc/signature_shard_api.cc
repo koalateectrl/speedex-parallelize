@@ -205,7 +205,7 @@ SignatureShardV1_server::update_checker_ips() {
 
     tbb::parallel_for(
         tbb::blocked_range<size_t>(0, signature_checker_ips_vec.size()),
-        [&signature_checker_ips_vec](auto r) {
+        [&signature_checker_ips_vec, this](auto r) {
             for (size_t i = r.begin(); i < r.end(); i++) {
                 check_heartbeat(signature_checker_ips_vec[i]);
             }

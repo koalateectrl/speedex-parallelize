@@ -152,9 +152,9 @@ void SignatureShardV1_server::filter_txs(const SignedTransactionWithPKList& tx_w
         std::cout << it->pk << std::endl;
     }
 
-    std::copy_if(tx_with_pks.begin(), tx_with_pks.end(), std::back_inserter(filtered_tx_with_pk_list),
-        [](auto val) {return val.pk != 0;});
-    //filtered_tx_with_pk_list.insert(filtered_tx_with_pk_list.end(), tx_with_pks.begin(), tx_with_pks.end());
+    //std::copy_if(tx_with_pks.begin(), tx_with_pks.end(), std::back_inserter(filtered_tx_with_pk_list),
+    //    [](auto val) {return val.pk != 0;});
+    filtered_tx_with_pk_list.insert(filtered_tx_with_pk_list.end(), tx_with_pks.begin(), tx_with_pks.end());
 }
 
 

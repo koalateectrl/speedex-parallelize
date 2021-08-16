@@ -138,15 +138,15 @@ int main(int argc, char const *argv[]) {
     first_shard.insert(first_shard.end(), account_with_pks.begin(), shard_ptrs[0]);
     account_with_pk_shard_list.push_back(first_shard);
 
-    if (num_shards > 1) {
-        for (size_t i = 1; i < num_shards - 1; i++) {
+    if (NUM_VIRTUAL_SHARDS > 1) {
+        for (size_t i = 1; i < NUM_VIRTUAL_SHARDS - 1; i++) {
             AccountIDWithPKList curr_shard;
             curr_shard.insert(curr_shard.end(), shard_ptrs[i - 1], shard_ptrs[i]);
             account_with_pk_shard_list.push_back(curr_shard);
         }
 
         AccountIDWithPKList last_shard;
-        last_shard.insert(last_shard.end(), shard_ptrs[num_shards - 2], account_with_pks.end());
+        last_shard.insert(last_shard.end(), shard_ptrs[NUM_VIRTUAL_SHARDS - 2], account_with_pks.end());
         account_with_pk_shard_list.push_back(last_shard);
     }
 

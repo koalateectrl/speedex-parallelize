@@ -148,7 +148,7 @@ void SignatureShardV1_server::filter_txs(const SignedTransactionWithPKList& tx_w
             }
         });
 
-    for (auto it = tx_with_pks.begin(); tx_with_pks.end(); it++) {
+    for (auto it = tx_with_pks.begin(); it != tx_with_pks.end(); it++) {
         std::cout << it->pk << std::endl;
     }
 

@@ -40,13 +40,13 @@ auto shard_accounts(ForwardIt first, ForwardIt last, Condition condition, uint64
 
 uint32_t
 init_shard(int idx, const SerializedAccountIDWithPK& account_with_pk, 
-    const ExperimentParameters& params, uint16_t num_assets = 20,
+    const ExperimentParameters& params,  uint64_t virt_shard_idx, uint16_t num_assets = 20,
     uint8_t tax_rate = 10, uint8_t smooth_mult = 10) {
 
     auto fd = xdr::tcp_connect(hostname_from_idx(idx).c_str(), SIGNATURE_SHARD_PORT);
     auto client = xdr::srpc_client<SignatureShardV1>(fd.get());
 
-    uint32_t return_value = *client.init_shard(account_with_pk, params, idx, num_assets, tax_rate, smooth_mult, 1);
+    uint32_t return_value = *client.init_shard(account_with_pk, params, idx, num_assets, tax_rate, smooth_mult, virt_shard_idx);
     return return_value;
 }
 
@@ -127,8 +127,10 @@ int main(int argc, char const *argv[]) {
     account_with_pk_list.insert(account_with_pk_list.end(), account_with_pks.begin(), account_with_pks.end());
 
     size_t num_shards = std::stoul(argv[3]);
+    size_t NUM_VIRTUAL_SHARDS = 64;
+
     auto shard_ptrs = shard_accounts(account_with_pks.begin(), account_with_pks.end(), 
-        [&num_shards] (auto x) {return x.account % num_shards;}, num_shards);
+        [&NUM_VIRTUAL_SHARDS] (auto x) {return x.account % NUM_VIRTUAL_SHARDS;}, NUM_VIRTUAL_SHARDS);
 
     std::vector<AccountIDWithPKList> account_with_pk_shard_list;
 
@@ -157,11 +159,11 @@ int main(int argc, char const *argv[]) {
     auto init_timestamp = init_time_measurement();
 
     tbb::parallel_for(
-        tbb::blocked_range<size_t>(0, num_shards),
-        [&account_with_pk_shard_list, &num_shards, &params] (auto r) {
+        tbb::blocked_range<size_t>(0, NUM_VIRTUAL_SHARDS),
+        [&account_with_pk_shard_list, &NUM_VIRTUAL_SHARDS, &num_shards, &params] (auto r) {
             for (size_t i = r.begin(); i != r.end(); i++) {
                 SerializedAccountIDWithPK serialized_account_with_pk = xdr::xdr_to_opaque(account_with_pk_shard_list[i]);
-                if (init_shard(i + 2, serialized_account_with_pk, params) == 1) {
+                if (init_shard((i % num_shards) + 2, serialized_account_with_pk, params, i) == 1) {
                     throw std::runtime_error("init shard failed!!!");
                 }
             }

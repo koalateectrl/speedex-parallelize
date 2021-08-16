@@ -136,22 +136,25 @@ std::string SignatureShardV1_server::hostname_from_idx(int idx) {
 void SignatureShardV1_server::filter_txs(const SignedTransactionWithPKList& tx_with_pk_list, 
     SignedTransactionWithPKList& filtered_tx_with_pk_list) {
 
-    std::vector<SignedTransactionWithPK> tx_with_pks;
-
-    std::mutex tx_with_pks_mutex;
+    std::vector<SignedTransactionWithPK> tx_with_pks {tx_with_pk_list.size()};
 
     tbb::parallel_for(
         tbb::blocked_range<size_t>(0, tx_with_pk_list.size()),
         [&tx_with_pks, &tx_with_pk_list, &tx_with_pks_mutex, this](auto r) {
             for (size_t i = r.begin(); i < r.end(); i++) {
                 if (_management_structures.db.get_pk_nolock(tx_with_pk_list[i].signedTransaction.transaction.metadata.sourceAccount)) {
-                    std::lock_guard<std::mutex> lock(tx_with_pks_mutex);
-                    tx_with_pks.push_back(tx_with_pk_list[i]);
+                    tx_with_pks[i] = tx_with_pk_list[i];
                 }
             }
         });
 
-    filtered_tx_with_pk_list.insert(filtered_tx_with_pk_list.end(), tx_with_pks.begin(), tx_with_pks.end());
+    for (auto it = tx_with_pk_list.begin(); tx_with_pk_list.end(); it++) {
+        std::cout << it->pk << std::endl;
+    }
+
+    std::copy_if(tx_with_pks.begin(), tx_with_pks.end(), std::back_inserter(filtered_tx_with_pk_list),
+        [](auto val) {return val.pk != 0});
+    //filtered_tx_with_pk_list.insert(filtered_tx_with_pk_list.end(), tx_with_pks.begin(), tx_with_pks.end());
 }
 
 

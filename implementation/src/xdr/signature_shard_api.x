@@ -29,7 +29,7 @@ namespace edce {
 
 program SignatureShard {
     version SignatureShardV1 {
-        uint32 init_shard(SerializedAccountIDWithPK, ExperimentParameters, uint32, uint32, uint32, uint32) = 1;
+        uint32 init_shard(SerializedAccountIDWithPK, ExperimentParameters, uint32, uint32, uint32, uint32, uint64) = 1;
         uint32 check_block(SerializedBlockWithPK, uint64) = 2;
         uint32 init_checker(void) = 3;
     } = 1;

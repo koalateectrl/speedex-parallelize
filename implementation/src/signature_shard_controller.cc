@@ -46,7 +46,7 @@ init_shard(int idx, const SerializedAccountIDWithPK& account_with_pk,
     auto fd = xdr::tcp_connect(hostname_from_idx(idx).c_str(), SIGNATURE_SHARD_PORT);
     auto client = xdr::srpc_client<SignatureShardV1>(fd.get());
 
-    uint32_t return_value = *client.init_shard(account_with_pk, params, idx, num_assets, tax_rate, smooth_mult);
+    uint32_t return_value = *client.init_shard(account_with_pk, params, idx, num_assets, tax_rate, smooth_mult, 1);
     return return_value;
 }
 

@@ -31,18 +31,23 @@ namespace edce {
 std::unique_ptr<unsigned int> 
 SignatureShardV1_server::init_shard(rpcsockptr* ip_addr, const SerializedAccountIDWithPK& account_with_pk, 
     const ExperimentParameters& params, uint16_t ip_idx,
-    uint16_t num_assets, uint8_t tax_rate, uint8_t smooth_mult) {
+    uint16_t num_assets, uint8_t tax_rate, uint8_t smooth_mult, uint64_t virt_shard_idx) {
 
     _ip_idx = ip_idx;
+    std::vector<uint64_t> account_idxs;
 
     AccountIDWithPKList account_with_pk_list;
     xdr::xdr_from_opaque(account_with_pk, account_with_pk_list);
 
     for (size_t i = 0; i < account_with_pk_list.size(); i++) {
-        _management_structures.db.add_account_to_db(account_with_pk_list[i].account, account_with_pk_list[i].pk);
+        uint64_t account_idx = _management_structures.db.add_account_to_db(account_with_pk_list[i].account, account_with_pk_list[i].pk);
+        account_idxs.push_back(account_idx);
     }
-
+    
     _management_structures.db.commit(0);
+
+    _virtual_shards_mapping.insert({virt_shard_idx, account_idxs});
+
 
     std::cout << "SUCCESSFULLY LOADED ACCOUNTS " << std::endl;
     return std::make_unique<unsigned int>(0);
@@ -76,12 +81,12 @@ SignatureShardV1_server::check_block(rpcsockptr* ip_addr, const SerializedBlockW
 
     std::vector<std::string> signature_checker_ips_vec;
 
-    signature_checker_ips_vec.insert(signature_checker_ips_vec.end(), signature_checker_ips.begin(), 
-        signature_checker_ips.end());
+    signature_checker_ips_vec.insert(signature_checker_ips_vec.end(), _signature_checker_ips.begin(), 
+        _signature_checker_ips.end());
     
     std::vector<SignedTransactionWithPKList> tx_with_pk_split_list;
 
-    split_transaction_block(filtered_tx_with_pk_list, signature_checker_ips.size(), tx_with_pk_split_list);
+    split_transaction_block(filtered_tx_with_pk_list, _signature_checker_ips.size(), tx_with_pk_split_list);
 
     size_t num_threads_lambda = num_threads;
 
@@ -116,7 +121,7 @@ SignatureShardV1_server::init_checker(rpcsockptr* ip_addr)
     struct sockaddr_in *addr_in = (struct sockaddr_in *)&sa;
     char *ip = inet_ntoa(addr_in->sin_addr);
 
-    signature_checker_ips.insert(std::string(ip));
+    _signature_checker_ips.insert(std::string(ip));
 
     std::cout << ip << std::endl;
 
@@ -147,16 +152,10 @@ void SignatureShardV1_server::filter_txs(const SignedTransactionWithPKList& tx_w
                 }
             }
         });
-/*
-    for (auto it = tx_with_pks.begin(); it != tx_with_pks.end(); it++) {
-        if (it->signedTransaction.transaction.metadata.sourceAccount != 0) {
-            std::cout << it->pk << std::endl;
-        }
-    }*/
 
     std::copy_if(tx_with_pks.begin(), tx_with_pks.end(), std::back_inserter(filtered_tx_with_pk_list),
         [](auto val) {return val.signedTransaction.transaction.metadata.sourceAccount != 0;});
-    //filtered_tx_with_pk_list.insert(filtered_tx_with_pk_list.end(), tx_with_pks.begin(), tx_with_pks.end());
+
 }
 
 
@@ -197,7 +196,7 @@ SignatureShardV1_server::check_heartbeat(const std::string& ip_addr) {
         return return_value;
     } catch (const std::system_error& e) {
         std::cout << "DEAD" << std::endl;
-        signature_checker_ips.erase(ip_addr);
+        _signature_checker_ips.erase(ip_addr);
         return 1;
     }
 }
@@ -205,8 +204,8 @@ SignatureShardV1_server::check_heartbeat(const std::string& ip_addr) {
 void
 SignatureShardV1_server::update_checker_ips() {
     std::vector<std::string> signature_checker_ips_vec;
-    signature_checker_ips_vec.insert(signature_checker_ips_vec.end(), signature_checker_ips.begin(), 
-        signature_checker_ips.end());
+    signature_checker_ips_vec.insert(signature_checker_ips_vec.end(), _signature_checker_ips.begin(), 
+        _signature_checker_ips.end());
 
     tbb::parallel_for(
         tbb::blocked_range<size_t>(0, signature_checker_ips_vec.size()),

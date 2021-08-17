@@ -132,7 +132,7 @@ setup_controller_db(const std::string& experiment_root, EdceManagementStructures
 
 int main(int argc, char const *argv[]) {
 
-    if (argc != (3 || 5)) {
+    if ((argc != 3) && (argc != 5)) {
         std::printf("usage: ./signature_shard_controller experiment_name num_phys_shards\n");
         std::printf("usage: ./signature_shard_controller experiment_name block_number num_phys_shards num_threads\n");
         return -1;

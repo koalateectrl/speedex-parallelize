@@ -209,8 +209,6 @@ private:
 	MemoryDatabase(const MemoryDatabase&) = delete;
 	MemoryDatabase& operator=(const MemoryDatabase&) = delete;
 
-	UserAccount& find_account(account_db_idx user_index);
-
 	friend class MemoryDatabaseView;
 
 	bool account_exists(AccountID account);
@@ -284,6 +282,8 @@ public:
 		}
 		return database[account_idx].in_valid_state();
 	}
+
+	UserAccount& find_account(account_db_idx user_index);
 
 	void commit_values();
 	void rollback_values();

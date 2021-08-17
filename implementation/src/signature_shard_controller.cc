@@ -190,6 +190,7 @@ int main(int argc, char const *argv[]) {
         auto client = xdr::srpc_client<SignatureShardV1>(fd.get());
 
         uint32_t return_value = *client.move_virt_shard(std::string(argv[2]), std::stoul(argv[3]));
+        std::cout << return_value << std::endl;
         return 0;
     }
 

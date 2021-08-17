@@ -129,8 +129,26 @@ SignatureShardV1_server::init_checker(rpcsockptr* ip_addr)
 
 std::unique_ptr<unsigned int>
 SignatureShardV1_server::move_virt_shard(rpcsockptr* ip_addr, const ip_str& to_ip, 
-        const uint64& virt_shard_num)
+        const uint64_t& virt_shard_num)
 {
+    auto fd = xdr::tcp_connect(to_ip.c_str(), SIGNATURE_SHARD_PORT);
+    auto client = xdr::srpc_client<SignatureShardV1>(fd.get());
+
+    std::vector<uint64_t> virt_shard_accts = _virtual_shards_mapping.find(virt_shard_num)->second;
+
+    std::vector<AccountIDWithPK> account_with_pks;
+
+    for (size_t i = 0; i < virt_shard_accts.size(); i++) {
+        UserAccount user_account = management_structures.db.find_account(virt_shard_accts[i]);
+        account_with_pks.push_back(AccountIDWithPK {user_account.get_owner(), user_account.get_pk()});
+    }
+
+    AccountIDWithPKList account_with_pk_list;
+
+    account_with_pk_list.insert(account_with_pk_list.end(), account_with_pks.begin(), account_with_pks.end());
+
+    SerializedAccountIDWithPK serialized_account_with_pk = xdr::xdr_to_opaque(account_with_pk_list);
+
     return std::make_unique<unsigned int>(0);
 }
 

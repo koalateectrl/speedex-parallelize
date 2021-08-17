@@ -30,8 +30,8 @@ namespace edce {
 
 std::unique_ptr<unsigned int> 
 SignatureShardV1_server::init_shard(rpcsockptr* ip_addr, const SerializedAccountIDWithPK& account_with_pk, 
-    const ExperimentParameters& params, uint16_t ip_idx,
-    uint16_t num_assets, uint8_t tax_rate, uint8_t smooth_mult, uint64_t virt_shard_idx) {
+    uint16_t ip_idx, uint16_t num_assets, uint8_t tax_rate, 
+    uint8_t smooth_mult, uint64_t virt_shard_idx) {
 
     _ip_idx = ip_idx;
     std::vector<uint64_t> account_idxs;

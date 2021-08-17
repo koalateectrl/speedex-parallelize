@@ -43,11 +43,14 @@ SignatureShardV1_server::init_shard(rpcsockptr* ip_addr, const SerializedAccount
         uint64_t account_idx = _management_structures.db.add_account_to_db(account_with_pk_list[i].account, account_with_pk_list[i].pk);
         account_idxs.push_back(account_idx);
     }
-    
+
     _management_structures.db.commit(0);
 
     _virtual_shards_mapping.insert({virt_shard_idx, account_idxs});
 
+    for (auto it = _virtual_shards_mapping.begin(); it != _virtual_shards_mapping.end(); it++) {
+        std::cout << it->first << std::endl;
+    }
 
     std::cout << "SUCCESSFULLY LOADED ACCOUNTS " << std::endl;
     return std::make_unique<unsigned int>(0);

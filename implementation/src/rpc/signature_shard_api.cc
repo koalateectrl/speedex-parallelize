@@ -125,7 +125,13 @@ SignatureShardV1_server::init_checker(rpcsockptr* ip_addr)
     std::cout << ip << std::endl;
 
     return std::make_unique<unsigned int>(0);
+}
 
+std::unique_ptr<unsigned int>
+SignatureShardV1_server::move_virt_shard(rpcsockptr* ip_addr, const ip_addr& to_ip, 
+        const uint64& virt_shard_num)
+{
+    return std::make_unique<unsigned int>(0);
 }
 
 

@@ -32,6 +32,9 @@ public:
 
     std::unique_ptr<unsigned int> init_checker(rpcsockptr* ip_addr);
 
+    std::unique_ptr<unsigned int> move_virt_shard(rpcsockptr* ip_addr, const ip_addr& to_ip, 
+        const uint64& virt_shard_num);
+
     // not rpc
 
     std::string hostname_from_idx(int idx);

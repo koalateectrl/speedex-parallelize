@@ -181,6 +181,17 @@ int main(int argc, char const *argv[]) {
         return 0;
     }
 
+    // move shard info from one to another
+    if (argc == 4) {
+        std::printf("usage: ./signature_shard_controller from_ip to_ip virt_shard_num\n");
+
+        auto fd = xdr::tcp_connect(std::string(argv[1]).c_str(), SIGNATURE_SHARD_PORT);
+        auto client = xdr::srpc_client<SignatureShardV1>(fd.get());
+
+        uint32_t return_value = *client.move_virt_shard(std::string(argv[2]), std::stoul(argv[3]));
+        return 0;
+    }
+
 
     if (argc == 5) {
         std::printf("usage: ./signature_shard_controller experiment_name block_number num_phys_shards num_threads\n");

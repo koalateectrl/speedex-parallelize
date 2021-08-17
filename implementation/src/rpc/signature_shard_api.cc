@@ -48,10 +48,6 @@ SignatureShardV1_server::init_shard(rpcsockptr* ip_addr, const SerializedAccount
 
     _virtual_shards_mapping.insert({virt_shard_idx, account_idxs});
 
-    for (auto it = _virtual_shards_mapping.begin(); it != _virtual_shards_mapping.end(); it++) {
-        std::cout << it->first << std::endl;
-    }
-
     std::cout << "SUCCESSFULLY LOADED ACCOUNTS " << std::endl;
     return std::make_unique<unsigned int>(0);
 }

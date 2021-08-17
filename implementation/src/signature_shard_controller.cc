@@ -32,7 +32,7 @@ auto shard_accounts(ForwardIt first, ForwardIt last, Condition condition, uint64
 
     shard_vec.push_back(std::partition(first, last, [&](const auto &v) {return condition(v) == 0;}));
     for (size_t i = 0; i < num_shards - 2; i++) {
-        shard_vec[i + 1] = std::partition(shard_vec[i], last, [&](const auto &v) {return condition(v) == (i + 1);});
+        shard_vec.push_back(std::partition(shard_vec[i], last, [&](const auto &v) {return condition(v) == (i + 1);}));
     }
 
     return shard_vec;

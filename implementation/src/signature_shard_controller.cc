@@ -160,6 +160,8 @@ int main(int argc, char const *argv[]) {
 
         std::cout << "INITIALIZING SHARDS BY SENDING ACCOUNT DATA" << std::endl;
 
+        auto init_timestamp = init_time_measurement();
+
         tbb::parallel_for(
             tbb::blocked_range<size_t>(0, NUM_VIRT_SHARDS),
             [&account_with_pk_shard_list, &NUM_VIRT_SHARDS, &num_phys_shards] (auto r) {
@@ -175,14 +177,17 @@ int main(int argc, char const *argv[]) {
 
         std::cout << "Initialized shards in " << init_res << std::endl;
 
+
         return 0;
     }
 
 
-    if (argc = 5) {
+    if (argc == 5) {
         std::printf("usage: ./signature_shard_controller experiment_name block_number num_phys_shards num_threads\n");
 
-        auto init_timestamp = init_time_measurement();
+        std::string experiment_root = std::string("experiment_data/") + std::string(argv[1]);
+
+        auto timestamp = init_time_measurement();
 
         EdceManagementStructures management_structures(
             20,

@@ -20,6 +20,7 @@
 #include <math.h>
 #include <vector>
 #include <cstdlib>
+#include <bitset>
 
 #define OUTPUT_BITS 256
 #define SQRT_OUTPUT_BITS 16
@@ -57,7 +58,7 @@ void sum_two_vecs(const std::vector<std::string> &vec_one, const std::vector<std
 
 int main(int argc, char const *argv[]) {
 
-    auto overall_timestamp = init_time_measurement();
+    auto overall_timestamp = edce::init_time_measurement();
 
     if (argc != 2) {
         std::printf("usage: ./test_multiset_hash_speed experiment_name\n");
@@ -65,27 +66,28 @@ int main(int argc, char const *argv[]) {
 
     std::string experiment_root = std::string("experiment_data/") + std::string(argv[1]);
 
-    EdceManagementStructures management_structures(
+    edce::EdceManagementStructures management_structures(
         20,
-        ApproximationParameters {
+        edce::ApproximationParameters {
             .tax_rate = 10,
             .smooth_mult = 10
         });
 
-    AccountIDList account_id_list;
+    edce::DeterministicKeyGenerator key_gen;
+    edce::AccountIDList account_id_list;
 
     auto accounts_filename = experiment_root + std::string("/accounts");
-    if (load_xdr_from_file(account_id_list, accounts_filename.c_str())) {
+    if (edce::load_xdr_from_file(account_id_list, accounts_filename.c_str())) {
         throw std::runtime_error("failed to load accounts list " + accounts_filename);
     }
 
-    std::vector<AccountIDWithPK> account_with_pks;
+    std::vector<edce::AccountIDWithPK> account_with_pks;
     account_with_pks.resize(account_id_list.size());
     tbb::parallel_for(
         tbb::blocked_range<size_t>(0, account_id_list.size()),
         [&key_gen, &account_id_list, &account_with_pks](auto r) {
             for (size_t i = r.begin(); i < r.end(); i++) {
-                AccountIDWithPK account_id_with_pk;
+                edce::AccountIDWithPK account_id_with_pk;
                 account_id_with_pk.account = account_id_list[i];
                 auto [_, pk] = key_gen.deterministic_key_gen(account_id_list[i]);
                 account_id_with_pk.pk = pk;
@@ -97,7 +99,7 @@ int main(int argc, char const *argv[]) {
 
     std::cout << "Total Number of Accounts: " << num_accounts << std::endl;
 
-    float overall_res = measure_time(overall_timestamp);
+    float overall_res = edce::measure_time(overall_timestamp);
 
     std::cout << "Hashed " << num_accounts << " signatures in " << overall_res << std::endl;
 

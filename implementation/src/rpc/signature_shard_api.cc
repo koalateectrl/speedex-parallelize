@@ -139,7 +139,10 @@ SignatureShardV1_server::move_virt_shard(rpcsockptr* ip_addr, const ip_str& to_i
     std::vector<AccountIDWithPK> account_with_pks;
 
     for (size_t i = 0; i < virt_shard_accts.size(); i++) {
-        UserAccount user_account = _management_structures.db.find_account(virt_shard_accts[i]);
+        // only move constructor defined for UserAccount, no copy constructor
+        AccountCommitment ac;
+        UserAccount user_account{ac};
+        user_account = std::move(_management_structures.db.find_account(virt_shard_accts[i]));
         account_with_pks.push_back(AccountIDWithPK {user_account.get_owner(), user_account.get_pk()});
     }
 

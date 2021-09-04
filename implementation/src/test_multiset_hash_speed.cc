@@ -45,13 +45,12 @@ void create_str_vec(std::vector<std::string> &str_vec, const std::string& messag
 }
 
 
-void sum_two_vecs(const std::vector<std::string> &vec_one, const std::vector<std::string> &vec_two,
-    std::vector<std::string> &vec_sum, uint64_t n) {
+void sum_two_vecs(std::vector<std::string> &vec_sum, const std::vector<std::string> &vec_to_add, uint64_t n) {
 
-    for (size_t i = 0; i < vec_one.size(); i++) {
-        unsigned long long orig_sum = std::bitset<SQRT_OUTPUT_BITS>(vec_one[i]).to_ullong() +
-            std::bitset<SQRT_OUTPUT_BITS>(vec_two[i]).to_ullong();
-        vec_sum.push_back(std::bitset<SQRT_OUTPUT_BITS>(orig_sum % n).to_string());
+    for (size_t i = 0; i < vec_sum.size(); i++) {
+        unsigned long long orig_sum = std::bitset<SQRT_OUTPUT_BITS>(vec_sum[i]).to_ullong() +
+            std::bitset<SQRT_OUTPUT_BITS>(vec_to_add[i]).to_ullong();
+        vec_sum[i] = std::bitset<SQRT_OUTPUT_BITS>(orig_sum % n).to_string();
     }
 }
 
@@ -61,47 +60,10 @@ int main(int argc, char const *argv[]) {
     auto overall_timestamp = edce::init_time_measurement();
 
     if (argc != 2) {
-        std::printf("usage: ./test_multiset_hash_speed experiment_name\n");
+        std::printf("usage: ./test_multiset_hash_speed i\n");
     }
 
-    std::string experiment_root = std::string("experiment_data/") + std::string(argv[1]);
-
-    edce::EdceManagementStructures management_structures(
-        20,
-        edce::ApproximationParameters {
-            .tax_rate = 10,
-            .smooth_mult = 10
-        });
-
-    edce::DeterministicKeyGenerator key_gen;
-    edce::AccountIDList account_id_list;
-
-    auto accounts_filename = experiment_root + std::string("/accounts");
-    if (edce::load_xdr_from_file(account_id_list, accounts_filename.c_str())) {
-        throw std::runtime_error("failed to load accounts list " + accounts_filename);
-    }
-
-    std::vector<edce::AccountIDWithPK> account_with_pks;
-    account_with_pks.resize(account_id_list.size());
-    tbb::parallel_for(
-        tbb::blocked_range<size_t>(0, account_id_list.size()),
-        [&key_gen, &account_id_list, &account_with_pks](auto r) {
-            for (size_t i = r.begin(); i < r.end(); i++) {
-                edce::AccountIDWithPK account_id_with_pk;
-                account_id_with_pk.account = account_id_list[i];
-                auto [_, pk] = key_gen.deterministic_key_gen(account_id_list[i]);
-                account_id_with_pk.pk = pk;
-                account_with_pks[i] = account_id_with_pk;
-            }
-        });
-
-    size_t num_accounts = account_with_pks.size();
-
-    std::cout << "Total Number of Accounts: " << num_accounts << std::endl;
-
-    float overall_res = edce::measure_time(overall_timestamp);
-
-    std::cout << "Hashed " << num_accounts << " signatures in " << overall_res << std::endl;
+    uint64_t num_test_accounts = std::stoi(1);
 
     if (sodium_init() == -1) {
         std::cout << "FAILED" << std::endl;
@@ -110,21 +72,46 @@ int main(int argc, char const *argv[]) {
 
     uint64_t n = pow(2, SQRT_OUTPUT_BITS);
 
-    std::string message = "test";
-    std::string message2 = "test2";
+    std::vector<std::string> msg_vec;
 
-    std::vector<std::string> str_vec;
-    std::vector<std::string> str_vec2;
-    create_str_vec(str_vec, message, n);
-    create_str_vec(str_vec2, message2, n);
+    auto create_timestamp = edce::init_time_measurement();
+
+    // create vector of strings
+    for (size_t i = 0; i < num_test_accounts; i++) {
+        std::string int_str = std::to_string(i);
+        const unsigned char* msg = reinterpret_cast<const unsigned char *> (int_str.c_str());
+        unsigned char out[crypto_hash_sha256_BYTES];
+        crypto_hash_sha256(out, msg, int_str.size());
+        msg_vec.push_back(std::string(out, out + sizeof(out)/sizeof(out[0])));
+    }
+
+    float create_res = edce::measure_time(create_timestamp);
+
+    std::cout << "Create " << num_test_accounts << " 256 bit inputs in " << create_res << std::endl;
 
     std::vector<std::string> summed_vec;
+    create_str_vec(summed_vec, msg_vec[0], n);
 
-    sum_two_vecs(str_vec, str_vec2, summed_vec, n);
+    auto hash_timestamp = edce::init_time_measurement();
+
+    // hashing + summing 
+    for (size_t i = 0; i < msg_vec.size() - 1; i++) {
+        std::vector<std::string> str_vec;
+        create_str_vec(str_vec, msg_vec[i + 1], n);
+        sum_two_vecs(summed_vec, str_vec, n);
+    }
+
+    float hash_res = edce::measure_time(hash_timestamp);
+
+    std::cout << "Hash and Sum " << num_test_accounts << " 256 bit inputs in " << hash_res << std::endl;
 
     for (size_t i = 0; i < summed_vec.size(); i++) {
-        std::cout << "Vec1: " << str_vec[i] << " Vec2: " << str_vec2[i] << " Sum: " << summed_vec[i] << std::endl;
+        std::cout << "Sum: " << summed_vec[i] << std::endl;
     }
+
+    float overall_res = edce::measure_time(overall_timestamp);
+
+    std::cout << "Overall: " << num_accounts << " in " << overall_res << std::endl;
 
     return 0;
 

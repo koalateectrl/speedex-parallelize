@@ -63,7 +63,7 @@ int main(int argc, char const *argv[]) {
         std::printf("usage: ./test_multiset_hash_speed i\n");
     }
 
-    uint64_t num_test_accounts = std::stoi(1);
+    uint64_t num_test_accounts = std::stoi(argv[1]);
 
     if (sodium_init() == -1) {
         std::cout << "FAILED" << std::endl;
@@ -111,7 +111,7 @@ int main(int argc, char const *argv[]) {
 
     float overall_res = edce::measure_time(overall_timestamp);
 
-    std::cout << "Overall: " << num_accounts << " in " << overall_res << std::endl;
+    std::cout << "Overall: " << num_test_accounts << " in " << overall_res << std::endl;
 
     return 0;
 

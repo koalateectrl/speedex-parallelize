@@ -63,6 +63,20 @@ void NewMemoryDatabase::update_balance(const AccountID account_id, const std::st
     }
 }
 
+void NewMemoryDatabase::remove_account(const AccountID account_id) {
+    if (!account_exists(account_id)) {
+        throw std::runtime_error("Invalid db access - no account");
+    }
+
+    auto remove_it = database_.find(account_id);
+    database_.erase(remove_it);
+}
+
+void NewMemoryDatabase::clear_db() {
+    database_.clear();
+    hash_ = 0;
+}
+
 size_t NewMemoryDatabase::size() const {
     return database_.size();
 }
@@ -78,6 +92,7 @@ int main() {
     NewMemoryDatabase db;
     db.account_creation(1);
     db.update_balance(1, "ADA", 5);
+    db.clear_db();
     std::cout << db.get_token_balance(1, "ADA") << std::endl;
 }
 

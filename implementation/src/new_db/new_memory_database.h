@@ -17,6 +17,9 @@ public:
 
     void update_balance(const AccountID account_id, const std::string& token_name, int64_t amount);
 
+    void remove_account(const AccountID account_id);
+    void clear_db();
+
     size_t size() const;
 
 private:

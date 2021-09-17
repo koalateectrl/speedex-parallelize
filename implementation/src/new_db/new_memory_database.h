@@ -1,12 +1,24 @@
+#include <iostream>
+#include <sodium.h>
+#include <math.h>
+#include <vector>
+#include <cstdlib>
 #include <unordered_map>
 #include <shared_mutex>
 #include "new_user_account.h"
 
 
+#define OUTPUT_BITS 256
+#define SQRT_OUTPUT_BITS 16
+
 class NewMemoryDatabase {
 public:
-    size_t get_hash();
+    std::vector<std::bitset<SQRT_OUTPUT_BITS>> get_hash();
     void calculate_hash();
+    void create_str_vec(std::vector<std::bitset<SQRT_OUTPUT_BITS>> &bitset_vec, 
+        const std::string& message, uint64_t n);
+    void sum_two_vecs(std::vector<std::bitset<SQRT_OUTPUT_BITS>> &bitset_sum, 
+        std::vector<std::bitset<SQRT_OUTPUT_BITS>> &vec_to_add, uint64_t n);
 
     NewUserAccount get_account(const AccountID account_id);
     std::unordered_map<TokenName, int64_t> get_all_tokens(const AccountID account_id);
@@ -22,8 +34,10 @@ public:
 
     size_t size() const;
 
+    NewMemoryDatabase();
+
 private:
-    size_t hash_;
+    std::vector<std::bitset<SQRT_OUTPUT_BITS>> hash_;
     std::shared_mutex mutex_;
     std::unordered_map<AccountID, NewUserAccount> database_;
 
